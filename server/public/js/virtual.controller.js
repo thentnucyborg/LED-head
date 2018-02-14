@@ -1,21 +1,34 @@
 // Create a Paper.js Path to draw a line into it:
-var path = new Path();
-// Give the stroke a color
-path.strokeColor = 'black';
-let grid = []
-let stride = 10
-for (let y = 5; y < 1000; y += stride) {
-    let line = []
-    for (let x = 5; x < 1000; x += stride) {
-        line.push(new Rectangle(x, y, stride, stride))
+
+
+var children = new Array()
+settings = {x: 500, y: 500, width: 20}
+
+
+for (y = 0; y < settings.x; y += settings.width) {
+    for (x = 0;  x < settings.y; x += settings.width) {
+        children.push(place(new Point(x, y), settings.width))
     }
-    grid.push(line)
 }
+var eclipse = new Rectangle()
+eclipse.center = new Point(settings.x/2, settings.y/2)
+eclipse.width = settings.width
+eclipse.height = settings.width
+eclipse.fillColor = 'Black'
+var mask = CompoundPath({
+    children: [new Shape.Ellipse(eclipse)],
+    fillColor: 'black',
+    selected: true
+})
+mask.fillColor= 'red'
+var group = new Group(mask, children)
+group.clipped = true
 
-var start = new Point(0,0);
-// Move to start and draw a line from there
-path.moveTo(start);
 
-// Note the plus operator on Point objects.
-// PaperScript does that for us, and much more!
-path.lineTo(start + [ 100, 200 ]);
+
+function place(point, size) {
+    var rect = new Path.Rectangle(point, size)
+    rect.fillColor = 'white'
+    rect.strokeColor = 'black'
+    return rect
+}
