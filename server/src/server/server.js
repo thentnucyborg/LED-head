@@ -7,7 +7,7 @@ const bodyParser = require('body-parser')
 const api = require('../api/index')
 
 const start = (options) => {
-  const { PORT } = options
+  const { PORT, socket } = options
   return new Promise((resolve, reject) => {
 
     const app = express()
@@ -24,6 +24,10 @@ const start = (options) => {
     /* Start Express server */
     const server = http.createServer(app)
     server.listen(PORT, () => resolve())
+
+    /* Connect to socket */
+    socket.connect({ server })
+    
   })
 }
 
