@@ -5,7 +5,7 @@ module.exports = (app, options) => {
   console.log('socket test, works?', socket.test())
 
   // Views
-  app.get('/', (req, res) => res.sendFile())
+  app.get('/', (req, res) => res.json({date: + new Date()}))
 
   // API
   app.get('/api/ping', (req, res) => res.json({date: + new Date()}))
