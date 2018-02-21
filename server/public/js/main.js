@@ -23,3 +23,4 @@ const sendMessage = (data) => {
 document.addEventListener("click", () => {
   sendMessage('YOLO')
 })
+
