@@ -7,6 +7,8 @@ module.exports = (app, options) => {
   // Views
   app.get('/', (req, res) => res.json({date: + new Date()}))
 
+  app.post('/', (req, res) => {})
+
   // API
   app.get('/api/ping', (req, res) => res.json({date: + new Date()}))
 
@@ -16,7 +18,7 @@ module.exports = (app, options) => {
 
   socket.setObserver( {
     notifyConnected: () => {console.log('socket connected')},
-    notifyMessage: (data) => {console.log('yuhu', data)},
+    notifyMessage: (data) => {console.log('yuhu', data.msg)},
     notifyDisconnect: () => {console.log('socket disconnected')},
     notifyError: () => {'socket error'}
   })

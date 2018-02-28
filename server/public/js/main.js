@@ -21,6 +21,6 @@ const sendMessage = (data) => {
 /* Test uuu */
  
 document.addEventListener("click", () => {
-  sendMessage('YOLO')
+  sendMessage({msg:'YOLO', grid:grid})
 })
 

@@ -38,7 +38,7 @@ class SocketService {
   /* Send message */
   message(data) {
     // add fail handler, socket must be open
-    this.socket.send(this.encrypt(data))
+      this.socket.send(this.encrypt(data))
   }
  
   /* Encrypt */

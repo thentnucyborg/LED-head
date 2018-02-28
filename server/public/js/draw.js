@@ -40,6 +40,8 @@ class Grid {
    *  |__x__|
    */
   constructor(n) {
+    this.width = n
+    this.height = n
     this.grid = [...new Array(n*3)].map((x, i) => [...new Array(n*3)].map((y, j) => new Tile(i, j)))
     this.phase = 0
   }
@@ -55,7 +57,11 @@ class Grid {
   }
 
   getGrid() {
+    console.log(this.grid)
+  }
 
+  getDimensions() {
+    return {height: this.height, width: this.width}
   }
 
   /* Callback with tile to do changes every */
@@ -68,10 +74,17 @@ class Grid {
     f(this.grid[x, y])
   }
 
-  /* */
+  /* Map all tiles to matrix tiles */
+  matrix(matrix) {
+    if (matrix.length === this.height && matrix[0].length === this.width) {
+      matrix.forEach((row, y) => row.forEach((color, x) => {
+          this.grid[x, y].setColor(color.r, color.g, color.b, color.r)
+      }))
+    }
+  }
+
+  /* TODO: Er dette kun for å vise demo? */
   update() {
-    // this.randomize()
-    // this.intensify()
     this.intensify()
   }
 
@@ -89,7 +102,7 @@ class Grid {
   // Color intensify up and down
   intensify() {
     this.every((tile) => {
-      this.phase += 0.0005
+      this.phase += 0.00005
       tile.setAlpha( (Math.sin(this.phase)/2 + 0.5))
     })
   }
@@ -123,6 +136,7 @@ class Draw {
     this.canvas = document.getElementById('myCanvas')
     this.ctx = canvas.getContext('2d')
     this.grid = grid
+    this.fps = 120
   }
 
   start() {
@@ -130,12 +144,12 @@ class Draw {
   }
 
   update() {
-    setTimeout(() => {
+      setTimeout(() => {
       this.grid.update()
       this.draw()
 
       requestAnimationFrame(() => this.update())
-    }, 1000 / 10)
+    }, 1000 / this.fps)
   }
 
   draw() {
