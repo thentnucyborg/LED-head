@@ -30,7 +30,6 @@ class Tile {
   }
 }
 
-
 class Grid {
   /*
    * Creates a (3n)*(3n) grid. Top with 4x sides.
@@ -57,7 +56,7 @@ class Grid {
   }
 
   getGrid() {
-    console.log(this.grid)
+    return this.grid
   }
 
   getDimensions() {
@@ -83,8 +82,10 @@ class Grid {
     }
   }
 
-  /* TODO: Er dette kun for å vise demo? */
+  /* Called in intervals*/
   update() {
+    // this.randomize()
+    // this.intensify()
     this.intensify()
   }
 
@@ -102,7 +103,7 @@ class Grid {
   // Color intensify up and down
   intensify() {
     this.every((tile) => {
-      this.phase += 0.00005
+      this.phase += 0.0005
       tile.setAlpha( (Math.sin(this.phase)/2 + 0.5))
     })
   }
@@ -125,11 +126,9 @@ class Grid {
   show() {
 
   }
-
 }
 
 const randomRGB = () => `#${Math.floor(Math.random()*16777215).toString(16)}`
-
 
 class Draw {
   constructor(grid) {
@@ -144,7 +143,7 @@ class Draw {
   }
 
   update() {
-      setTimeout(() => {
+    setTimeout(() => {
       this.grid.update()
       this.draw()
 
@@ -157,61 +156,50 @@ class Draw {
     drawCube(this.grid.getSides(), 200, 300)
   }
 
+  drawCube(grid, x, y) {
+    const w = 20
+
+    const drawLeft = (x, y, w, color) => {
+      ctx.beginPath()
+      ctx.moveTo(x, y)
+      ctx.lineTo(x - w, y - w * 0.5)
+      ctx.lineTo(x - w, y - w * 1.5)
+      ctx.lineTo(x, y - w)
+      ctx.closePath()
+      ctx.fillStyle = color
+      ctx.strokeStyle = 'black'
+      ctx.stroke()
+      ctx.fill()
+    }
+
+    const drawRight = (x, y, w, color) => {
+      ctx.beginPath()
+      ctx.moveTo(x, y)
+      ctx.lineTo(x + w, y - w * 0.5)
+      ctx.lineTo(x + w, y - w * 1.5)
+      ctx.lineTo(x, y - w)
+      ctx.closePath()
+      ctx.fillStyle = color
+      ctx.strokeStyle = 'black'
+      ctx.stroke()
+      ctx.fill()
+    }
+
+    const drawTop = (x, y, w, color) => {
+      ctx.beginPath()
+      ctx.moveTo(x, y - w)
+      ctx.lineTo(x - w, y - w * 1.5)
+      ctx.lineTo(x, y - w * 2)
+      ctx.lineTo(x + w, y - w * 1.5)
+      ctx.closePath()
+      ctx.fillStyle = color
+      ctx.strokeStyle = 'black'
+      ctx.stroke()
+      ctx.fill()
+    }
+
+    grid.top.forEach((l, x) => l.forEach((e, y) => drawTop((x+y)*w+75, 150+y*w-(w*x/2)-(y*w/2), w, e.getRGBA())))
+    grid.first.forEach((l, x) => l.forEach((e, y) => drawLeft(x*w+75, 150+y*w + (w*x/2), w, e.getRGBA())))
+    grid.second.forEach((l, x) => l.forEach((e, y) => drawRight(x*w+75 + (l.length - 1) * w, 150+y*w + ((l.length - x) * w/2) - w/2, w, e.getRGBA())))
+  }
 }
-
-
-
-const grid = new Grid(10)
-const draw = new Draw(grid)
-draw.start()
-
-
-const drawCube = (grid, x, y) => {
-  const w = 20
-  grid.top.forEach((l, x) => l.forEach((e, y) => drawTop((x+y)*w+75, 150+y*w-(w*x/2)-(y*w/2), w, e.getRGBA())))
-  grid.first.forEach((l, x) => l.forEach((e, y) => drawLeft(x*w+75, 150+y*w + (w*x/2), w, e.getRGBA())))
-  grid.second.forEach((l, x) => l.forEach((e, y) => drawRight(x*w+75 + (l.length - 1) * w, 150+y*w + ((l.length - x) * w/2) - w/2, w, e.getRGBA())))
-}
-
-const drawLeft = (x, y, w, color) => {
-  ctx.beginPath()
-  ctx.moveTo(x, y)
-  ctx.lineTo(x - w, y - w * 0.5)
-  ctx.lineTo(x - w, y - w * 1.5)
-  ctx.lineTo(x, y - w)
-  ctx.closePath()
-  ctx.fillStyle = color
-  ctx.strokeStyle = 'black'
-  ctx.stroke()
-  ctx.fill()
-}
-
-const drawRight = (x, y, w, color) => {
-  ctx.beginPath()
-  ctx.moveTo(x, y)
-  ctx.lineTo(x + w, y - w * 0.5)
-  ctx.lineTo(x + w, y - w * 1.5)
-  ctx.lineTo(x, y - w)
-  ctx.closePath()
-  ctx.fillStyle = color
-  ctx.strokeStyle = 'black'
-  ctx.stroke()
-  ctx.fill()
-}
-
-const drawTop = (x, y, w, color) => {
-  ctx.beginPath()
-  ctx.moveTo(x, y - w)
-  ctx.lineTo(x - w, y - w * 1.5)
-  ctx.lineTo(x, y - w * 2)
-  ctx.lineTo(x + w, y - w * 1.5)
-  ctx.closePath()
-  ctx.fillStyle = color
-  ctx.strokeStyle = 'black'
-  ctx.stroke()
-  ctx.fill()
-}
-
-
-
-
