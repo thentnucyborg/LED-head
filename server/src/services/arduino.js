@@ -1,3 +1,4 @@
+// const SerialPort = require('serialport').SerialPort;
 
 const connect = (options) => {
   const { port } = options
@@ -8,7 +9,7 @@ const connect = (options) => {
 }
 
 const test = () => {
-  return 'YAY'
+  return 'test'
 }
 
 module.exports = Object.assign({}, { connect, test })

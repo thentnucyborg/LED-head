@@ -24,8 +24,7 @@ const setObserver = (obs) => {
 }
 
 const test = () => {
-  return 'YAY'
+  return 'test'
 }
 
 module.exports = Object.assign({}, { connect, setObserver, test })
-

@@ -20,4 +20,4 @@ const init = async () => {
   await server.start(options), console.log('server started')
 }
 
-init().then(e => console.log('Server started')).catch(e => console.log('error', e))
+init().catch(e => console.log('error', e))
