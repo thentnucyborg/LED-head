@@ -22,12 +22,9 @@ const sendMessage = (data) => {
   socket.message(data)
 }
 
-
-
-
 /* Test uuu */
  
 document.addEventListener("click", () => {
-  sendMessage('message')
+  sendMessage({msg:'YOLO', grid:grid})
 })
 

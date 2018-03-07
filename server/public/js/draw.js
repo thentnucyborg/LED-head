@@ -30,7 +30,6 @@ class Tile {
   }
 }
 
-
 class Grid {
   /*
    * Creates a (3n)*(3n) grid. Top with 4x sides.
@@ -40,6 +39,8 @@ class Grid {
    *  |__x__|
    */
   constructor(n) {
+    this.width = n
+    this.height = n
     this.grid = [...new Array(n*3)].map((x, i) => [...new Array(n*3)].map((y, j) => new Tile(i, j)))
     this.phase = 0
   }
@@ -58,6 +59,10 @@ class Grid {
     return this.grid
   }
 
+  getDimensions() {
+    return {height: this.height, width: this.width}
+  }
+
   /* Callback with tile to do changes every */
   every(f) {
     this.grid.forEach(row => row.forEach(tile => f(tile)))
@@ -66,6 +71,15 @@ class Grid {
   /* Callback with tile to do changes on single */
   single(x, y, f) {
     f(this.grid[x, y])
+  }
+
+  /* Map all tiles to matrix tiles */
+  matrix(matrix) {
+    if (matrix.length === this.height && matrix[0].length === this.width) {
+      matrix.forEach((row, y) => row.forEach((color, x) => {
+          this.grid[x, y].setColor(color.r, color.g, color.b, color.r)
+      }))
+    }
   }
 
   /* Called in intervals*/
@@ -116,12 +130,12 @@ class Grid {
 
 const randomRGB = () => `#${Math.floor(Math.random()*16777215).toString(16)}`
 
-
 class Draw {
   constructor(grid) {
     this.canvas = document.getElementById('myCanvas')
     this.ctx = canvas.getContext('2d')
     this.grid = grid
+    this.fps = 120
   }
 
   start() {
@@ -134,13 +148,12 @@ class Draw {
       this.draw()
 
       requestAnimationFrame(() => this.update())
-    }, 1000 / 10)
+    }, 1000 / this.fps)
   }
 
   draw() {
     this.ctx.clearRect(0, 0, canvas.width, canvas.height)
-    this.drawCube(this.grid.getSides(), 200, 300)
-
+    drawCube(this.grid.getSides(), 200, 300)
   }
 
   drawCube(grid, x, y) {
@@ -190,4 +203,3 @@ class Draw {
     grid.second.forEach((l, x) => l.forEach((e, y) => drawRight(x*w+75 + (l.length - 1) * w, 150+y*w + ((l.length - x) * w/2) - w/2, w, e.getRGBA())))
   }
 }
-

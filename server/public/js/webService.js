@@ -31,6 +31,7 @@ class SocketService {
  
   init() {
     // todo check if observer actually has all methods, otherwise error?
+
     this.socket.addEventListener('open', event => this.observer.notifyConnected(event))
     this.socket.addEventListener('message', event => this.observer.notifyMessage(this.decrypt(event.data)))
     this.socket.addEventListener('close', event => this.observer.notifyDisconnected(event))
