@@ -24,7 +24,9 @@ const setObserver = (obs) => {
 }
 
 const send = (data) => {
-  clients.forEach(e => e.send(data))
+  clients.forEach(e => {
+    if (e.readyState === WebSocket.OPEN) e.send(data)
+  })
 }
 
 const test = () => {
