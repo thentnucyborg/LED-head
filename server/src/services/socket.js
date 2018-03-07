@@ -1,6 +1,6 @@
 const WebSocket = require('ws')
 
-let client = {}
+let clients = []
 let observer = {}
 
 const connect = (options) => {
@@ -9,7 +9,7 @@ const connect = (options) => {
   return new Promise((resolve, reject) => {
     const wss = new WebSocket.Server({ server })
     wss.on('connection', (ws, req) => {
-      client = ws
+      clients.push(ws)
       observer.notifyConnected()
       ws.on('message', msg => observer.notifyMessage(msg))
       ws.on('close', msg => observer.notifyDisconnect())
@@ -24,7 +24,7 @@ const setObserver = (obs) => {
 }
 
 const send = (data) => {
-  client.send(data)
+  clients.forEach(e => e.send(data))
 }
 
 const test = () => {
