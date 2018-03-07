@@ -1,10 +1,12 @@
+import { Render } from './render/render.js'
+import { WebService, SocketService } from './webService.js'
+
 const web = new WebService('http://localhost:3000/api')
 const socket = new SocketService('ws://localhost:3000')
 
-const grid = new Grid(10)
-const draw = new Draw(grid)
+const render = new Render()
 
-draw.start()
+render.start()
 
 socket.setObserver({
   notifyConnected: data => console.log('connected'),
@@ -15,6 +17,7 @@ socket.setObserver({
 /* Incomming data */
 const message = (data) => {
   console.log(data)
+  render.updateGrid(data)
 }
 
 /* Outgoing data */
@@ -25,6 +28,11 @@ const sendMessage = (data) => {
 /* Test uuu */
  
 document.addEventListener("click", () => {
-  sendMessage({msg:'YOLO', grid:grid})
+  sendMessage([[]])
 })
 
+class Main {
+  constructor() {
+
+  }
+}
