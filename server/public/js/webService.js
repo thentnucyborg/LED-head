@@ -2,7 +2,7 @@
  * Class to provide REST connection to the server
  * GET and POST methods with promise return
  */
-class WebService {
+export class WebService {
   constructor(url) {
     this.url = url
   }
@@ -22,7 +22,7 @@ class WebService {
  * Class to provide socket connection to the server 
  * Implemented with observer pattern, notifies on open, message, close and error.
  */
-class SocketService {
+export class SocketService {
   constructor(url) {
     this.url = url
     this.socket = {}

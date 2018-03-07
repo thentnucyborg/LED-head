@@ -23,8 +23,12 @@ const setObserver = (obs) => {
   observer = obs
 }
 
+const send = (data) => {
+  client.send(data)
+}
+
 const test = () => {
   return 'test'
 }
 
-module.exports = Object.assign({}, { connect, setObserver, test })
+module.exports = Object.assign({}, { connect, setObserver, send, test })
