@@ -12,15 +12,20 @@ const connect = (options) => {
       clients.push(ws)
       observer.notifyConnected()
       ws.on('message', msg => observer.notifyMessage(msg))
-      ws.on('close', msg => observer.notifyDisconnect())
-      ws.on('error', msg => observer.notifyError())
-    })
+      ws.on('close', msg => { observer.notifyDisconnect(), killClient(ws)) }
+      ws.on('error', msg => { observer.notifyError(), killClient(ws)) }
+    }) 
     resolve()
   })
 }
 
 const setObserver = (obs) => {
   observer = obs
+}
+
+/* Removes client from array */
+const killClient = (ws) => {
+  clients.splice(clients.indexOf(ws), 1)
 }
 
 const send = (data) => {
