@@ -153,7 +153,7 @@ class Draw {
 
   draw() {
     this.ctx.clearRect(0, 0, canvas.width, canvas.height)
-    drawCube(this.grid.getSides(), 200, 300)
+    this.drawCube(this.grid.getSides(), 200, 300)
   }
 
   drawCube(grid, x, y) {
