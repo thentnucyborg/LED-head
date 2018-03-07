@@ -1,14 +1,14 @@
 require('dotenv').config()
 
 const server = require('./server/server')
-
 const arduino = require('./services/arduino')
 const socket = require('./services/socket')
 
 const options = {
   ...process.env, // secure :P
   arduino: arduino,
-  socket: socket
+  socket: socket,
+  server: server
 }
 
 /* Catch em all */
@@ -17,8 +17,7 @@ process.on('unhandledRejection', (err) => { console.error('Rejection', err) })
 
 const init = async () => {
   await arduino.connect(options), console.log('arduino connected')
-  await socket.connect(options), console.log('socket connceted')
-  await server.start(options)
+  await server.start(options), console.log('server started')
 }
 
-init().then(e => console.log('Server started')).catch(e => console.log('error', e))
+init().catch(e => console.log('error', e))

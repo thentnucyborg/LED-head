@@ -2,11 +2,13 @@
 <html>
 <head>
   <title>Virtual LED box</title>
-  <script src="js/paperjs-v0/dist/paper-full.js"></script>
-  <script type="text/paperscript" src="js/virtual.controller.js" canvas="myCanvas"></script>
-  <script type="text/paperscript" canvas="myCanvas"></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <canvas id="myCanvas" resize></canvas>
+  <canvas id="myCanvas" width="500" height="500" style="border:1px solid #000000;"> </canvas>
+
+  <script src="js/draw.js"></script>
+  <script src="js/webService.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

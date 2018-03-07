@@ -1,14 +1,30 @@
+const WebSocket = require('ws')
+
+let client = {}
+let observer = {}
 
 const connect = (options) => {
-  const { port } = options
+  const { port, server } = options
+  
   return new Promise((resolve, reject) => {
-    // connect
+    const wss = new WebSocket.Server({ server })
+    wss.on('connection', (ws, req) => {
+      client = ws
+      observer.notifyConnected()
+      ws.on('message', msg => observer.notifyMessage(msg))
+      ws.on('close', msg => observer.notifyDisconnect())
+      ws.on('error', msg => observer.notifyError())
+    })
     resolve()
   })
 }
 
-const test = () => {
-  return 'YAY'
+const setObserver = (obs) => {
+  observer = obs
 }
 
-module.exports = Object.assign({}, { connect, test })
+const test = () => {
+  return 'test'
+}
+
+module.exports = Object.assign({}, { connect, setObserver, test })
