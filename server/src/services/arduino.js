@@ -5,25 +5,31 @@ let serial = {}
 const connect = (options) => {
   const { port } = options
   return new Promise((resolve, reject) => {
-    serial = new SerialPort(options.ARDUINO_PORT, { baudRate: 9600 })
+    serial = new SerialPort(options.ARDUINO_PORT, {
+      baudRate: 115200,
+      dataBits: 8,
+      parity: 'none',
+      stopBits: 1
+    })
 
     serial.on('open', () => {
-
-      function* generator(i=0) { while(true) yield i += 1 }
-      const counter = generator()
-
-      setInterval(() => {
-        const i = counter.next().value
-        write(i%255, i%255, i%255)
-
-        console.log('update, intensity=', i)
-      }, 900);
+      setTimeout(() => {
+        function* generator(i=1) { while(true) yield i += 1  }
+        const counter = generator()
+        setInterval(() => {
+          const i = counter.next().value
+          let r = Math.sin( (i / 200) ) / 2 + 0.5
+          let g = Math.sin( (i*2 / 200) ) / 2 + 0.5
+          let b = Math.sin( (i*4 / 200) ) / 2 + 0.5
+          write(r*255, g*255, b*255)
+          console.log('update, intensity=', i )
+        }, 10);
+      }, 2000) // Wait 2 seconds for connection to open.
     });
 
-    serial.on('error', (err) => console.log('err', err))
-    serial.on('data', (data) => console.log('data', data))
-    serial.on('close', (data) => console.log('close', data))
-    serial.on('drain', (data) => console.log('drain', data))
+    serial.on('data', (data) => {
+      console.log(data.toString('utf-8'))
+    });
 
     resolve()
   })
@@ -38,7 +44,8 @@ const write = (r, g, b) => {
       bytes[led+1] = g
       bytes[led+2] = b
     }
-    serial.write(new Buffer(bytes, 'binary'), e => {console.log("Wrote bytes.. " + e)})
+    console.log("Sendt? " + serial.write(new Buffer(bytes, 'binary')))
+    serial.flush()
 }
 
 const test = () => {
