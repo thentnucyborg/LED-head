@@ -8,11 +8,11 @@
 
 #include <FastLED.h>
 // ONLY change these values
-#define NUM_LEDS 6
+#define NUM_LEDS 60
 #define DATA_PIN 6
 #define BUTTON_PIN 2
-#define MAX_BRIGHTNESS 100
-#define BAUDRATE 1000000
+#define MAX_BRIGHTNESS 100 // From 0 - 255
+#define BAUDRATE 1000000   // More than enough, can be set to 115200
 
 // BUFFER AND VARIABLES FOR RECEIVING A BYTEARRAY
 byte LED_buffer[NUM_LEDS*3];      // Each led has 3 bytes of data (One for each color value)
@@ -100,10 +100,11 @@ void loop(){
     //Serial.flush();
     gotData = false;
   }
+  // Additional feeture check button press on PIN 2 (active low)
   if(digitalRead(BUTTON_PIN)==LOW){
     Serial.end();
     //HalloweenEyes(0xff, 0x00, 0x00, 1,1, true, 10, 100, 3000);
-    //CylonBounce(0xff, 0, 0, 1, 10, 1000);
+    CylonBounce(0xff, 0, 0, 1, 10, 1000);
     for(uint8_t i= 0; i< 10; i++){
     colorWipe(0x00,0xff,0x00, 50);
     colorWipe(0x00,0x00,0x00, 50);

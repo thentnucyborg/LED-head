@@ -7,7 +7,7 @@ import sys
 import binascii
 
 BAUDRATE = 1000000 # Baud rate, match with Arduino sketch
-NO_LEDS = 6       # Number of LEDs in the string
+NO_LEDS = 60      # Number of LEDs in the string
 
 # Initialize serial communication, 8 data bits, no parity 1 stop bit, REMEMBER to set correct COM port
 ser = serial.Serial('COM3', BAUDRATE, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE)
@@ -27,13 +27,10 @@ LED_values = bytearray([r,g,b]*NO_LEDS)
 def main():  # This is just a testing function
     while(True):
         serialWrite(LED_values)
-        LED_values[0] += 5
-        LED_values[4] += 5
-        LED_values[8] += 5
-        if LED_values[0] == 255:
-            LED_values[0] = 0
-            LED_values[4] = 0
-            LED_values[8] = 0
+        for x in range(0, NO_LEDS*3):
+            LED_values[x] += 5
+            if LED_values[x] == 255:
+                LED_values[x] = 0
         
         print("LED-array: ", binascii.hexlify(LED_values)) # Convert the bytearray to hex for printing
 
