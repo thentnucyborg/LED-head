@@ -5,7 +5,7 @@ let serial = {}
 const connect = (options) => {
   const { port } = options
   return new Promise((resolve, reject) => {
-    serial = new SerialPort(options.ARDUINO_PORT, { baudRate: 1000000 })
+    serial = new SerialPort(options.ARDUINO_PORT, { baudRate: 9600 })
 
     serial.on('open', () => {
 
@@ -14,10 +14,10 @@ const connect = (options) => {
 
       setInterval(() => {
         const i = counter.next().value
-        write(i%255, (i*2)%255, (i*4)%255)
+        write(i%255, i%255, i%255)
 
         console.log('update, intensity=', i)
-      }, 1000);
+      }, 900);
     });
 
     serial.on('error', (err) => console.log('err', err))
@@ -30,13 +30,15 @@ const connect = (options) => {
 }
 
 const write = (r, g, b) => {
-  let bytestr = ''
-  for (let i = 0; i < 60; i++) {
-    bytestr += `00000000${(255).toString(2)}`.slice(-8) // '111111110000000011111111'
-    bytestr += `00000000${(0).toString(2)}`.slice(-8) // '111111110000000011111111'
-    bytestr += `00000000${(255).toString(2)}`.slice(-8) // '111111110000000011111111'
-  }
-  serial.write(bytestr)
+    const leds = 60
+    let bytes = new Uint8Array(leds*3)
+    for (let i = 0; i < leds; i++) {
+      let led = i*3
+      bytes[led+0] = r
+      bytes[led+1] = g
+      bytes[led+2] = b
+    }
+    serial.write(new Buffer(bytes, 'binary'), e => {console.log("Wrote bytes.. " + e)})
 }
 
 const test = () => {
