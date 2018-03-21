@@ -12,8 +12,8 @@ const connect = (options) => {
       clients.push(ws)
       observer.notifyConnected()
       ws.on('message', msg => observer.notifyMessage(msg))
-      ws.on('close', msg => { observer.notifyDisconnect(), killClient(ws)) }
-      ws.on('error', msg => { observer.notifyError(), killClient(ws)) }
+      ws.on('close', msg => { observer.notifyDisconnect(), killClient(ws) })
+      ws.on('error', msg => { observer.notifyError(), killClient(ws) })
     }) 
     resolve()
   })
