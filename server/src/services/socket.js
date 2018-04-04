@@ -1,41 +1,39 @@
-const WebSocket = require('ws')
+const WebSocket = require('ws');
 
-let clients = []
-let observer = {}
+let clients = [];
+let observer = {};
 
-const connect = (options) => {
-  const { port, server } = options
-  
+const connect = ({ server }) => {
   return new Promise((resolve, reject) => {
-    const wss = new WebSocket.Server({ server })
+    const wss = new WebSocket.Server({ server });
     wss.on('connection', (ws, req) => {
-      clients.push(ws)
-      observer.notifyConnected()
-      ws.on('message', msg => observer.notifyMessage(msg))
-      ws.on('close', msg => { observer.notifyDisconnect(), killClient(ws) })
-      ws.on('error', msg => { observer.notifyError(), killClient(ws) })
-    }) 
-    resolve()
-  })
-}
+      clients.push(ws);
+      observer.notifyConnected();
+      ws.on('message', data => observer.notifyMessage(data));
+      ws.on('error', error => { observer.notifyError(error), killClient(ws); });
+      ws.on('close', () => { observer.notifyDisconnect(), killClient(ws); });
+    });
+    resolve();
+  });
+};
 
 const setObserver = (obs) => {
-  observer = obs
-}
+  observer = obs;
+};
 
 /* Removes client from array */
 const killClient = (ws) => {
-  clients.splice(clients.indexOf(ws), 1)
-}
+  clients.splice(clients.indexOf(ws), 1);
+};
 
-const send = (data) => {
-  clients.forEach(e => {
-    if (e.readyState === WebSocket.OPEN) e.send(data)
-  })
-}
+// maybe send() har promise innebygd? eller callback
+const send = ({ buffer }) => {
+  return new Promise((resolve, reject) => {
+    clients.forEach(e => {
+      if (e.readyState === WebSocket.OPEN) e.send(JSON.stringify(buffer));
+    });
+    resolve();
+  });
+};
 
-const test = () => {
-  return 'test'
-}
-
-module.exports = Object.assign({}, { connect, setObserver, send, test })
+module.exports = Object.assign({}, { connect, setObserver, send });

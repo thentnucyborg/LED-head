@@ -1,55 +1,48 @@
 const SerialPort = require('serialport');
+const chain = () => new Promise(res => res());
 
-let serial = {}
+let serial = null;
+let observer = null;
 
-const connect = (options) => {
-  const { port } = options
-  return new Promise((resolve, reject) => {
-    serial = new SerialPort(options.ARDUINO_PORT, {
-      baudRate: 115200,
-      dataBits: 8,
-      parity: 'none',
-      stopBits: 1
-    })
+/* eyo */
+const createConnection = () => (
+  chain()
+    .then(findPort)
+    .then(connect)
+);
 
-    serial.on('open', () => {
-      setTimeout(() => {
-        function* generator(i=1) { while(true) yield i += 1  }
-        const counter = generator()
-        setInterval(() => {
-          const i = counter.next().value
-          let r = Math.sin( (i / 200) ) / 2 + 0.5
-          let g = Math.sin( (i*2 / 200) ) / 2 + 0.5
-          let b = Math.sin( (i*4 / 200) ) / 2 + 0.5
-          write(r*255, g*255, b*255)
-          console.log('update, intensity=', i )
-        }, 10);
-      }, 2000) // Wait 2 seconds for connection to open.
-    });
+/* Auto find the correct port */
+const findPort = () => (
+  SerialPort.list()
+    .then(ports => ports.find(port => port.vendorId))
+);
 
-    serial.on('data', (data) => {
-      console.log(data.toString('utf-8'))
-    });
+/* Create a serial connections */
+const connect = ({ comName }) => {
+  const options = {
+    baudRate: 115200,
+    dataBits: 8,
+    parity: 'none',
+    stopBits: 1
+  };
 
-    resolve()
-  })
-}
+  const serial = new SerialPort(comName, options);
 
-const write = (r, g, b) => {
-    const leds = 60
-    let bytes = new Uint8Array(leds*3)
-    for (let i = 0; i < leds; i++) {
-      let led = i*3
-      bytes[led+0] = r
-      bytes[led+1] = g
-      bytes[led+2] = b
-    }
-    console.log("Sendt? " + serial.write(new Buffer(bytes, 'binary')))
-    serial.flush()
-}
+  serial.on('open', () => { observer.notifyConnected(); });
+  serial.on('data', (data) => { observer.notifyMessage(data.toString('utf-8')); });
+  serial.on('error', (error) => { observer.notifyError(error); });
+  serial.on('close', () => { observer.notifyDisconnect(); });
+};
 
-const test = () => {
-  return 'test'
-}
+const isConnected = (serial) ? true : false;
 
-module.exports = Object.assign({}, { connect, test })
+/* Add a listener to */
+const setObserver = (obs) => {
+  observer = obs;
+};
+
+const send = (buffer) => (
+  serial.write(buffer)
+);
+
+module.exports = Object.assign({}, { createConnection, isConnected, setObserver, send });
