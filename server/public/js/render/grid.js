@@ -41,7 +41,7 @@ export class Grid {
 
   /* Callback with tile to do changes on single */
   single(x, y, f) {
-    f(this.grid[x, y])
+    f(this.grid[y][x])
   }
 
   /* Called in intervals */

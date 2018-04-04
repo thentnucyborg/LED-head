@@ -19,11 +19,9 @@ const connect = (options) => {
         setInterval(() => {
           const i = counter.next().value
           let r = Math.sin( (i / 200) ) / 2 + 0.5
-          let g = Math.sin( (i*2 / 200) ) / 2 + 0.5
-          let b = Math.sin( (i*4 / 200) ) / 2 + 0.5
-          write(r*255, g*255, b*255)
+          write(r*50, r*50, r*50)
           console.log('update, intensity=', i )
-        }, 10);
+        }, 1000);
       }, 2000) // Wait 2 seconds for connection to open.
     });
 
@@ -40,9 +38,15 @@ const write = (r, g, b) => {
     let bytes = new Uint8Array(leds*3)
     for (let i = 0; i < leds; i++) {
       let led = i*3
-      bytes[led+0] = r
-      bytes[led+1] = g
-      bytes[led+2] = b
+      if (i == 59) {
+          bytes[led+0] = 255
+          bytes[led+1] = 255
+          bytes[led+2] = 255
+      } else {
+          bytes[led+0] = 0
+          bytes[led+1] = 0
+          bytes[led+2] = 0
+      }
     }
     console.log("Sendt? " + serial.write(new Buffer(bytes, 'binary')))
     serial.flush()
