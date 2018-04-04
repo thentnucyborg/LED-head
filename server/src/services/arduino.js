@@ -2,6 +2,9 @@ const SerialPort = require('serialport');
 
 let serial = {}
 
+SerialPort.list()
+    .then(console.log)
+
 const connect = (options) => {
   const { port } = options
   return new Promise((resolve, reject) => {
@@ -9,8 +12,9 @@ const connect = (options) => {
       baudRate: 115200,
       dataBits: 8,
       parity: 'none',
-      stopBits: 1
+      stopBits: 1,
     })
+
 
     serial.on('open', () => {
       setTimeout(() => {
@@ -24,7 +28,7 @@ const connect = (options) => {
           write(r*255, g*255, b*255)
           console.log('update, intensity=', i )
         }, 10);
-      }, 2000) // Wait 2 seconds for connection to open.
+      }, 6000) // Wait 2 seconds for connection to open.
     });
 
     serial.on('data', (data) => {
@@ -45,7 +49,7 @@ const write = (r, g, b) => {
       bytes[led+2] = b
     }
     console.log("Sendt? " + serial.write(new Buffer(bytes, 'binary')))
-    serial.flush()
+    // serial.flush()
 }
 
 const test = () => {

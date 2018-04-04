@@ -6,11 +6,11 @@ import time
 import sys
 import binascii
 
-BAUDRATE = 1000000 # Baud rate, match with Arduino sketch
+BAUDRATE = 115200 # Baud rate, match with Arduino sketch
 NO_LEDS = 6       # Number of LEDs in the string
 
 # Initialize serial communication, 8 data bits, no parity 1 stop bit, REMEMBER to set correct COM port
-ser = serial.Serial('COM3', BAUDRATE, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE)
+ser = serial.Serial('COM5', BAUDRATE, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE)
 time.sleep(5) # Some wait time for initializing com port
 
 def serialWrite(data):
