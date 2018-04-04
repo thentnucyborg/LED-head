@@ -1,11 +1,13 @@
-const { hexToRGB, RGBtoString } = require('../utils/colorUtils');
-const { wave } = require('../utils/numberUtils');
+const Model = require('../model/model');
 
+/*
+* Binding together all connections. Recieves, maps, formats and sends data.
+*/
 module.exports = class Controller {
   constructor({ arduino, socket }) {
     this.arduino = arduino;
     this.socket = socket;
-    this.model = new Model(); // get stuff from /public/render/* !
+    this.model = new Model();
 
     this.setObservers({
       arduino: this.arduino,
@@ -20,6 +22,7 @@ module.exports = class Controller {
     this.start();
   }
 
+  /* Attach observer methods to the connections */
   setObservers({ socket, arduino }) {
     socket.setObserver({
       notifyConnected: () => { console.log('socket connected'); },
@@ -36,6 +39,7 @@ module.exports = class Controller {
     });
   }
 
+  /* Attach mapping and format methods for both connections */
   setPipelineMethods({ socket, arduino }) {
     socket.mapping = ({ data }) => {
       return { data: data };
@@ -44,7 +48,6 @@ module.exports = class Controller {
     arduino.mapping = ({ data }) => {
       return { data: data };
     };
-
 
     socket.format = ({ data }) => {
       return { buffer: data };
@@ -55,67 +58,24 @@ module.exports = class Controller {
     };
   }
 
+  /* Start transmitting */
   start() {
     console.log('Start transmitting in 2 seconds');
-
     setTimeout(() => { 
       setInterval(() => {
-        if (this.arduino.isConnected) {
-          this.update({ getData: () => this.model.getData(), connection: this.arduino });
-        }
-        this.update({ getData: () => this.model.getData(), connection: this.socket });
+        this.transmitt({ getData: () => this.model.getData(), connection: this.arduino });
+        this.transmitt({ getData: () => this.model.getData(), connection: this.socket });
       }, 50);
     }, 2000);
   }
 
   /* Process data and send to clients */
-  update({ getData, connection }) {
+  transmitt({ getData, connection }) {
+    if (!connection.isConnected()) return;
     getData()
       .then(connection.map)
       .then(connection.format)
       .then(connection.send)
-      .catch(this.error);
-  }
-
-  error(error) {
-    console.log('pipeline error');
-    console.log(error);
-    console.log('****');
+      .catch(e => console.log('LOl', e));
   }
 };
-
-class Model {
-  constructor() {
-    const n = 9;
-    this.grid = [...new Array(n*3)].map((x, i) => [...new Array(n*3)].map((y, j) => '#000000'));
-
-    this.start();
-    this.mode = 'test1';
-  }
-
-  getData() {
-    return new Promise((resolve, reject) => {
-      resolve({ data: this.grid });
-    });
-  }
-
-  start() {
-    console.log('Start model changes');
-    function* generator(i=0, increment=0.05) { while(true) yield i += increment; }
-
-    const counter = generator(0, 1);
-
-    setTimeout(() => { 
-      setInterval(() => {
-        this.update(counter.next().value);
-      }, 10);
-    }, 500);
-  }
-
-  update(num) {
-    const mode = {
-      test1: (n) => this.grid.map(r => r.map(tile => RGBtoString({ r: n % 255, g: 0, b: n % 255, a: n % 255 }))),
-    };
-    this.grid = mode[this.mode](num);
-  }
-}

@@ -1,9 +1,11 @@
 const WebSocket = require('ws');
 
 let clients = [];
-let observer = {};
+let observer = null;
 
+/* Create connection */
 const connect = ({ server }) => {
+  // Todo - rewrite so promise resolves if connection success, reject otherwise
   return new Promise((resolve, reject) => {
     const wss = new WebSocket.Server({ server });
     wss.on('connection', (ws, req) => {
@@ -17,6 +19,10 @@ const connect = ({ server }) => {
   });
 };
 
+/* True if successfull connection(s) */
+const isConnected = () => (clients.length > 0) ? true : false;
+
+/* Add a listener */
 const setObserver = (obs) => {
   observer = obs;
 };
@@ -26,14 +32,12 @@ const killClient = (ws) => {
   clients.splice(clients.indexOf(ws), 1);
 };
 
-// maybe send() har promise innebygd? eller callback
+/* Send buffer to all socket connections */
 const send = ({ buffer }) => {
-  return new Promise((resolve, reject) => {
-    clients.forEach(e => {
-      if (e.readyState === WebSocket.OPEN) e.send(JSON.stringify(buffer));
-    });
-    resolve();
+  clients.forEach(e => {
+    if (e.readyState === WebSocket.OPEN) e.send(JSON.stringify(buffer));
   });
+  return Promise.resolve();
 };
 
-module.exports = Object.assign({}, { connect, setObserver, send });
+module.exports = Object.assign({}, { connect, isConnected, setObserver, send });

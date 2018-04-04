@@ -1,6 +1,7 @@
 /*
  * Class to provide REST connection to the server
  * GET and POST methods with promise return
+ * Dependant of jquery
  */
 export class WebService {
   constructor(url) {
@@ -29,8 +30,10 @@ export class SocketService {
     this.observer = {};
   }
  
-  init() {
-    // todo check if observer actually has all methods, otherwise error?
+  /* Set observer */
+  setObserver(observer) {
+    this.socket = new WebSocket(this.url);
+    this.observer = observer;
 
     this.socket.addEventListener('open', event => this.observer.notifyConnected(event));
     this.socket.addEventListener('message', event => this.observer.notifyMessage(this.decrypt(event.data)));
@@ -38,17 +41,8 @@ export class SocketService {
     this.socket.addEventListener('error', event => console.log('err sock', event));
   }
  
-  /* Set observer */
-  setObserver(observer) {
-    this.socket = new WebSocket(this.url);
-    this.observer = observer;
-    this.init();
-  }
- 
   /* Send message */
   message(data) {
-    // todo add fail handler, socket must be open
-    // or, this will not be used. actions will go through restapi
     this.socket.send(this.encrypt(data));
   }
  

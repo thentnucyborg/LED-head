@@ -1,4 +1,3 @@
-
 const hexToRGB = (hex) => ({
   r: parseInt(hex.slice(1, 3), 16),
   g: parseInt(hex.slice(3, 5), 16),

@@ -5,7 +5,7 @@ const arduino = require('./services/arduino');
 const socket = require('./services/socket');
 
 const options = {
-  ...process.env, // secure :P
+  port: process.env.PORT,
   arduino: arduino,
   socket: socket,
   server: server
