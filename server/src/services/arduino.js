@@ -12,9 +12,8 @@ const connect = (options) => {
       baudRate: 115200,
       dataBits: 8,
       parity: 'none',
-      stopBits: 1,
+      stopBits: 1
     })
-
 
     serial.on('open', () => {
       setTimeout(() => {
@@ -23,9 +22,7 @@ const connect = (options) => {
         setInterval(() => {
           const i = counter.next().value
           let r = Math.sin( (i / 200) ) / 2 + 0.5
-          let g = Math.sin( (i*2 / 200) ) / 2 + 0.5
-          let b = Math.sin( (i*4 / 200) ) / 2 + 0.5
-          write(r*255, g*255, b*255)
+          write(r*50, r*50, r*50)
           console.log('update, intensity=', i )
         }, 10);
       }, 6000) // Wait 2 seconds for connection to open.

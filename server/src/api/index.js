@@ -13,7 +13,10 @@ module.exports = (app, options) => {
 
   socket.setObserver( {
     notifyConnected: () => {console.log('socket connected')},
-    notifyMessage: (data) => {console.log('yuhu', data), socket.send(data)},
+    notifyMessage: (data) => {
+      socket.send(data)
+      console.log('yuhu', data)
+    },
     notifyDisconnect: () => {console.log('socket disconnected')},
     notifyError: () => {console.log('socket error')}
   })

@@ -15,7 +15,7 @@ export class Render {
 
   /* Map all tiles to matrix tiles */
   updateGrid(grid) {
-    grid.forEach((r, x) => r.forEach((c, y) => this.grid.single(x, y, (tile) => tile.setColor(color))))
+    grid.forEach((r, y) => r.forEach((c, x) => this.grid.single(x, y, (tile) => {tile.setColor(c) })))
   }
 
   update() {
