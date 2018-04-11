@@ -1,34 +1,29 @@
-const path = require('path')
-const http = require('http')
+const path = require('path');
+const http = require('http');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-const express = require('express')
-const bodyParser = require('body-parser')
+const api = require('../api/index');
+const Controller = require('../controllers/controller');
 
-const api = require('../api/index')
-
+/* Express server with socket handler attached */
 const start = (options) => {
-  const { PORT, socket } = options
+  const { port, socket } = options;
   return new Promise((resolve, reject) => {
 
-    const app = express()
+    const app = express();
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false}));
+    app.use(express.static(path.join(__dirname, '../../public')));
 
-    /* Configuration */
-    app.use(bodyParser.json())
-    app.use(bodyParser.urlencoded({ extended: false}))
+    const controller = new Controller(options);
+    api(app, { controller: controller });
 
-    app.use(express.static(path.join(__dirname, '../../public')))
+    const server = http.createServer(app).listen(port, () => {
+      socket.connect({ server });
+      resolve();
+    });
+  });
+};
 
-    /* API */
-    api(app, options)
-
-    /* Start Express server */
-    const server = http.createServer(app)
-    server.listen(PORT, () => resolve())
-
-    /* Connect to socket */
-    socket.connect({ server })
-    
-  })
-}
-
-module.exports = Object.assign({}, {start})
+module.exports = Object.assign({}, { start });
