@@ -1,20 +1,21 @@
 /*
  * Class to provide REST connection to the server
  * GET and POST methods with promise return
+ * Dependant of jquery
  */
 export class WebService {
   constructor(url) {
-    this.url = url
+    this.url = url;
   }
 
   /* Get request */
   get(path) {
-    return new Promise(resolve => {$.get(this.url + path, res => resolve(res))})
+    return new Promise(resolve => ($.get(this.url + path, res => resolve(res))));
   }
 
   /* Post request */
   post(path, data) {
-    return new Promise(resolve => {$.post(this.url + path, data, res => resolve(res))})
+    return new Promise(resolve => ($.post(this.url + path, data, res => resolve(res))));
   }
 }
 
@@ -24,40 +25,34 @@ export class WebService {
  */
 export class SocketService {
   constructor(url) {
-    this.url = url
-    this.socket = {}
-    this.observer = {}
-  }
- 
-  init() {
-    // todo check if observer actually has all methods, otherwise error?
-
-    this.socket.addEventListener('open', event => this.observer.notifyConnected(event))
-    this.socket.addEventListener('message', event => this.observer.notifyMessage(this.decrypt(event.data)))
-    this.socket.addEventListener('close', event => this.observer.notifyDisconnected(event))
-    this.socket.addEventListener('error', event => console.log('err sock', event))
+    this.url = url;
+    this.socket = {};
+    this.observer = {};
   }
  
   /* Set observer */
   setObserver(observer) {
-    this.socket = new WebSocket(this.url)
-    this.observer = observer
-    this.init()
+    this.socket = new WebSocket(this.url);
+    this.observer = observer;
+
+    this.socket.addEventListener('open', event => this.observer.notifyConnected(event));
+    this.socket.addEventListener('message', event => this.observer.notifyMessage(this.decrypt(event.data)));
+    this.socket.addEventListener('close', event => this.observer.notifyDisconnected(event));
+    this.socket.addEventListener('error', event => console.log('err sock', event));
   }
  
   /* Send message */
   message(data) {
-    // todo add fail handler, socket must be open
-    this.socket.send(this.encrypt(data))
+    this.socket.send(this.encrypt(data));
   }
  
   /* Encrypt */
   encrypt(data) {
-    return JSON.stringify(data)
+    return JSON.stringify(data);
   }
  
   /* Decrypt */
   decrypt(data) {
-    return JSON.parse(data)
+    return JSON.parse(data);
   }
 }

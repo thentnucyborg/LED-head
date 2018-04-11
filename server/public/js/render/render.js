@@ -1,30 +1,36 @@
-import { Grid } from './grid.js'
-import { Draw } from './draw.js'
+import { Grid } from './grid.js';
+import { Draw } from './draw.js';
 
+/*
+* Controls the render loop
+*/
 export class Render {
-
   constructor() {
-    this.grid = new Grid(10)
-    this.draw = new Draw(this.grid)
-    this.fps = 30
+    this.grid = new Grid(9);
+    this.draw = new Draw();
+    this.fps = 30;
   }
   
+  /* Start render loop */
   start() {
-    this.update()
+    this.render();
   }
 
-  /* Map all tiles to matrix tiles */
-  updateGrid(grid) {
-    grid.forEach((r, x) => r.forEach((c, y) => this.grid.single(x, y, (tile) => tile.setColor(color))))
+  /* Stop render loop */
+  stop() {
+    // Todo - stop
   }
 
-  update() {
+  /* Render loop, draws the grid */
+  render() {
     setTimeout(() => {
-      //this.grid.update()
-      this.draw.draw()
-
-      requestAnimationFrame(() => this.update())
-    }, 1000 / this.fps)
+      this.draw.draw(this.grid);
+      requestAnimationFrame(() => this.render());
+    }, 1000 / this.fps);
   }
 
+  /* Set new grid */
+  update(grid) {
+    this.grid.setGrid(grid);
+  }
 }

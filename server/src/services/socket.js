@@ -1,41 +1,43 @@
-const WebSocket = require('ws')
+const WebSocket = require('ws');
 
-let clients = []
-let observer = {}
+let clients = [];
+let observer = null;
 
-const connect = (options) => {
-  const { port, server } = options
-  
+/* Create connection */
+const connect = ({ server }) => {
+  // Todo - rewrite so promise resolves if connection success, reject otherwise
   return new Promise((resolve, reject) => {
-    const wss = new WebSocket.Server({ server })
+    const wss = new WebSocket.Server({ server });
     wss.on('connection', (ws, req) => {
-      clients.push(ws)
-      observer.notifyConnected()
-      ws.on('message', msg => observer.notifyMessage(msg))
-      ws.on('close', msg => { observer.notifyDisconnect(), killClient(ws)) }
-      ws.on('error', msg => { observer.notifyError(), killClient(ws)) }
-    }) 
-    resolve()
-  })
-}
+      clients.push(ws);
+      observer.notifyConnected();
+      ws.on('message', data => observer.notifyMessage(data));
+      ws.on('error', error => { observer.notifyError(error), killClient(ws); });
+      ws.on('close', () => { observer.notifyDisconnect(), killClient(ws); });
+    });
+    resolve();
+  });
+};
 
+/* True if successfull connection(s) */
+const isConnected = () => (clients.length > 0) ? true : false;
+
+/* Add a listener */
 const setObserver = (obs) => {
-  observer = obs
-}
+  observer = obs;
+};
 
 /* Removes client from array */
 const killClient = (ws) => {
-  clients.splice(clients.indexOf(ws), 1)
-}
+  clients.splice(clients.indexOf(ws), 1);
+};
 
-const send = (data) => {
+/* Send buffer to all socket connections */
+const send = ({ buffer }) => {
   clients.forEach(e => {
-    if (e.readyState === WebSocket.OPEN) e.send(data)
-  })
-}
+    if (e.readyState === WebSocket.OPEN) e.send(JSON.stringify(buffer));
+  });
+  return Promise.resolve();
+};
 
-const test = () => {
-  return 'test'
-}
-
-module.exports = Object.assign({}, { connect, setObserver, send, test })
+module.exports = Object.assign({}, { connect, isConnected, setObserver, send });
