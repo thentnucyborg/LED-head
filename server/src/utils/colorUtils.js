@@ -21,6 +21,10 @@ const RGBtoString = ({ r, g, b, a }) => {
   return string;
 };
 
+const randomHex = () => (
+  '#'+Math.floor(Math.random()*16777215).toString(16)
+);
+
 const toHex = (c) => {return `00${c.toString(16)}`.slice(-2)}
 
 const RGBAToHex = ({ r, g, b, a }) => {
@@ -28,4 +32,4 @@ const RGBAToHex = ({ r, g, b, a }) => {
 }
 
 
-module.exports = { hexToRGB, hexToRGBA, RGBtoString, RGBAToHex };
+module.exports = { hexToRGB, hexToRGBA, RGBtoString, RGBAToHex, randomHex };

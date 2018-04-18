@@ -1,5 +1,7 @@
-const {hexToRGB, RGBtoString, RGBAToHex} = require('../utils/colorUtils');
-const {wave} = require('../utils/numberUtils');
+
+const { intensity, random, test } = require('./programs');
+const { hexToRGB, RGBtoString, RGBAToHex } = require('../utils/colorUtils');
+const { wave } = require('../utils/numberUtils');
 const p = 5*60
 const f = 1/255
 
@@ -16,14 +18,18 @@ class Model {
         this.startDelay = 500;
         this.frequency = 10;
         this.maxBrightness = 1.0;
+  
+        this.currentTime = + new Date();
+        this.previousTime = + new Date();
+        this.deltaTime = 0;
     }
 
     /* Create object with the different modes */
     createModes() {
-        // In the future move to different location.
         return {
-            test1: (dt) => this.grid.map(r => r.map(tile => RGBAToHex({r: 255, g: 0, b: 255, a: dt % 255}))),
-            test2: () => {},
+          test1: test,
+          test2: random,
+          test3: intensity,
         };
     }
 
@@ -63,30 +69,31 @@ class Model {
         return p * sum * f // power = norm(5 * 60 * colorChannelIntencity)
     }
 
-    /* Start updating the model with a set mode */
-    startPulseAnimation() {
-        console.log(`Start model changes ${this.selectedMode}`);
+      /* Start updating the model with a set mode */
+  start() {
+    console.log(`Start model changes ${this.selectedMode}`);
 
-        // Todo - change to change in time (delta time) instead of counter.
-        function* generator(i = 0, increment = 0.05) {
-            while (true) yield i += increment;
-        }
+    setTimeout(() => { 
+      setInterval(() => {
+        this.currentTime = + new Date();
 
-        const counter = generator(0, 1);
+        this.deltaTime = this.currentTime - this.previousTime;
+        this.previousTime = this.currentTime;
 
-        setTimeout(() => {
-            setInterval(() => {
-                this.update(counter.next().value);
-            }, this.frequency);
-        }, this.startDelay);
-    }
+        this.update({
+          dt: this.deltaTime,
+          time: this.currentTime,
+          grid: this.grid,
+        });
 
-    /* Update the grid */
-    update(dt) {
-        this.setData(this.modes[this.selectedMode](dt));
-    }
+      }, this.frequency);
+    }, this.startDelay);
+  }
 
-
+  /* Update the grid */
+  update({...params}) {
+    this.grid = this.modes[this.selectedMode](params);
+  }
 }
 
 module.exports = Model;

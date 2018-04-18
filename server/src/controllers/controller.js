@@ -28,6 +28,7 @@ module.exports = class Controller {
   /* Attach observer methods to the connections */
   setObservers({ socket, arduino }) {
     socket.setObserver({
+      
       notifyConnected: () => { console.log('socket connected'); },
       notifyMessage: (data) => { console.log('socket data', data); this.model.setData(data)},
       notifyDisconnect: () => { console.log('socket disconnected'); },
