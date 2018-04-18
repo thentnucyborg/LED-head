@@ -1,5 +1,9 @@
 const SerialPort = require('serialport');
 const chain = () => new Promise(res => res());
+const mappings = {
+  LEDCUBE: require('../mappings/ledCubeMapping.json')
+  // CYBORGHEAD: JSON.parse(require('../mappings/cyborgHeadMapping.json')),
+};
 
 let serial = null;
 let observer = null;
@@ -44,9 +48,14 @@ const setObserver = (obs) => {
   observer = obs;
 };
 
-/* Send buffer message */
-const send = (buffer) => (
-  serial.write(buffer)
-);
+/* Set mapping for the arduino LED device */
+const getMapping = (targetDevice) => {
+    return mappings[targetDevice]
+}
 
-module.exports = Object.assign({}, { createConnection, isConnected, setObserver, send });
+/* Send buffer message */
+const send = (buffer) => {
+  serial.write(buffer)
+};
+
+module.exports = Object.assign({}, { createConnection, isConnected, setObserver, send, getMapping });
