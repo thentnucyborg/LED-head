@@ -1,4 +1,5 @@
 const Model = require('../model/model');
+const {hexToRGB} = require('../utils/colorUtils');
 
 /*
 * Binding together all connections. Recieves, maps, formats and sends data.
@@ -7,7 +8,8 @@ module.exports = class Controller {
   constructor({ arduino, socket }) {
     this.arduino = arduino;
     this.socket = socket;
-    this.model = new Model();
+    this.device = "LEDCUBE"
+    this.model = new Model(4, 4);
 
     this.setObservers({
       arduino: this.arduino,
@@ -19,6 +21,7 @@ module.exports = class Controller {
       socket: this.socket,
     });
 
+    this.model.startPulseAnimation();
     this.start();
   }
 
@@ -26,14 +29,14 @@ module.exports = class Controller {
   setObservers({ socket, arduino }) {
     socket.setObserver({
       notifyConnected: () => { console.log('socket connected'); },
-      notifyMessage: (data) => { console.log('socket data', data); },
+      notifyMessage: (data) => { console.log('socket data', data); this.model.setData(data)},
       notifyDisconnect: () => { console.log('socket disconnected'); },
       notifyError: (error) => { console.log('socket error', error); },
     });
 
     arduino.setObserver({
       notifyConnected: () => { console.log('arduino connected'); },
-      notifyMessage: (data) => { console.log('arduino data'); },
+      notifyMessage: (data) => { console.log('arduino data');},
       notifyDisconnect: () => { console.log('arduino disconnected'); },
       notifyError: (error) => { console.log('Arduino error', error); }, 
     });
@@ -46,7 +49,24 @@ module.exports = class Controller {
     };
 
     arduino.mapping = ({ data }) => {
-      return { data: data };
+      let mapping = this.arduino.getMapping(this.device)
+      let bytes = new Uint8Array(mapping.leds * 3)
+      data.forEach((row, y) => {
+        row.forEach((val, x) => {
+          let led = mapping.mapping[y][x] * 3
+          if (led < 0 ) {
+            bytes[led+0] = 0
+            bytes[led+1] = 0
+            bytes[led+2] = 0
+          } else {
+            let c = hexToRGB(val)
+            bytes[led+0] = c.r
+            bytes[led+1] = c.g
+            bytes[led+2] = c.b
+          }
+      })})
+
+      return {data: new Buffer(bytes, 'binary')};
     };
 
     socket.format = ({ data }) => {
@@ -54,7 +74,7 @@ module.exports = class Controller {
     };
 
     arduino.format = ({ data }) => {
-      return { buffer: new Buffer(new Uint8Array(20), 'binary') };
+      return data
     };
   }
 
@@ -65,15 +85,15 @@ module.exports = class Controller {
       setInterval(() => {
         this.transmitt({ getData: () => this.model.getData(), connection: this.arduino });
         this.transmitt({ getData: () => this.model.getData(), connection: this.socket });
-      }, 50);
+      }, 1000 / 30);
     }, 2000);
   }
 
   /* Process data and send to clients */
   transmitt({ getData, connection }) {
-    if (!connection.isConnected()) return;
+    if (!connection.isConnected()) {;return;}
     getData()
-      .then(connection.map)
+      .then(connection.mapping)
       .then(connection.format)
       .then(connection.send)
       .catch(e => console.log('LOl', e));

@@ -1,5 +1,9 @@
 const SerialPort = require('serialport');
 const chain = () => new Promise(res => res());
+const mappings = {
+  LEDCUBE: require('../mappings/ledCubeMapping.json')
+  // CYBORGHEAD: JSON.parse(require('../mappings/cyborgHeadMapping.json')),
+};
 
 let serial = null;
 let observer = null;
@@ -12,7 +16,7 @@ const createConnection = () => (
 );
 
 /* True if successfull serial connection */
-const isConnected = () => (serial) ? true : false;
+const isConnected = () => {return (serial) ? true : false;}
 
 /* Auto find the correct port */
 const findPort = () => (
@@ -31,7 +35,8 @@ const connect = ({ comName }) => {
 
   // Todo - fix the connection, check out serial.open(...) <- promise
   // Todo - better error message if arduino not connected.
-  const serial = new SerialPort(comName, options);
+
+  serial = new SerialPort(comName, options);
 
   serial.on('open', () => { observer.notifyConnected(); });
   serial.on('data', (data) => { observer.notifyMessage(data.toString('utf-8')); });
@@ -44,9 +49,14 @@ const setObserver = (obs) => {
   observer = obs;
 };
 
-/* Send buffer message */
-const send = (buffer) => (
-  serial.write(buffer)
-);
+/* Set mapping for the arduino LED device */
+const getMapping = (targetDevice) => {
+    return mappings[targetDevice]
+}
 
-module.exports = Object.assign({}, { createConnection, isConnected, setObserver, send });
+/* Send buffer message */
+const send = (buffer) => {
+  serial.write(buffer)
+};
+
+module.exports = Object.assign({}, { createConnection, isConnected, setObserver, send, getMapping });

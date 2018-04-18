@@ -30,11 +30,11 @@ def slice_overhead(li: list):
     th = int(len(li) / 3)
     tw = int(len(li[0]) / 3)
     return {
-        'first':  cut(tw*1, th*0, tw*2, tw*1),
-        'second': cut(tw*2, th*1, tw*3, tw*2),
-        'third':  cut(tw*1, th*2, tw*2, tw*3),
-        'fourth': cut(tw*0, th*1, tw*1, tw*2),
-        'top':    cut(tw*1, th*1, tw*2, tw*2)
+        'first':  cut(tw*1, th*0, tw*2, th*1),
+        'second': cut(tw*2, th*1, tw*3, th*2),
+        'third':  cut(tw*1, th*2, tw*2, th*3),
+        'fourth': cut(tw*0, th*1, tw*1, th*2),
+        'top':    cut(tw*1, th*1, tw*2, th*2)
     }
 
 def sides_to_matrix(li, width, height):
@@ -103,7 +103,7 @@ def send_frame(js: list):
     asyncio.get_event_loop().run_until_complete(communicate('ws://localhost:3000/', js))
 
 
-height, width = 30, 30
+height, width = 4*3, 4*3
 
 frame = random_frame(width, height)
 while True:
