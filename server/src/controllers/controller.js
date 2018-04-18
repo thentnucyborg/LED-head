@@ -25,6 +25,7 @@ module.exports = class Controller {
   /* Attach observer methods to the connections */
   setObservers({ socket, arduino }) {
     socket.setObserver({
+      
       notifyConnected: () => { console.log('socket connected'); },
       notifyMessage: (data) => { console.log('socket data', data); },
       notifyDisconnect: () => { console.log('socket disconnected'); },
@@ -54,7 +55,7 @@ module.exports = class Controller {
     };
 
     arduino.format = ({ data }) => {
-      return { buffer: new Buffer(new Uint8Array(20), 'binary') };
+      return new Buffer(new Uint8Array(20), 'binary');
     };
   }
 
@@ -66,7 +67,7 @@ module.exports = class Controller {
         this.transmitt({ getData: () => this.model.getData(), connection: this.arduino });
         this.transmitt({ getData: () => this.model.getData(), connection: this.socket });
       }, 50);
-    }, 2000);
+    }, 200);
   }
 
   /* Process data and send to clients */

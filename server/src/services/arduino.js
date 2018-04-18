@@ -12,7 +12,7 @@ const createConnection = () => (
 );
 
 /* True if successfull serial connection */
-const isConnected = () => (serial) ? true : false;
+const isConnected = () => ((serial) ? true : false);
 
 /* Auto find the correct port */
 const findPort = () => (
@@ -31,7 +31,7 @@ const connect = ({ comName }) => {
 
   // Todo - fix the connection, check out serial.open(...) <- promise
   // Todo - better error message if arduino not connected.
-  const serial = new SerialPort(comName, options);
+  serial = new SerialPort(comName, options);
 
   serial.on('open', () => { observer.notifyConnected(); });
   serial.on('data', (data) => { observer.notifyMessage(data.toString('utf-8')); });
