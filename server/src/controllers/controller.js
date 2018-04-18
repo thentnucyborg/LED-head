@@ -1,5 +1,6 @@
 const Model = require('../model/model');
 const {hexToRGB} = require('../utils/colorUtils');
+const {powerUsage} = require('../utils/powerUtils');
 
 /*
 * Binding together all connections. Recieves, maps, formats and sends data.
@@ -65,7 +66,7 @@ module.exports = class Controller {
             bytes[led+2] = c.b
           }
       })})
-
+        console.log("powerusage: ", powerUsage(data, mapping))
       return {data: new Buffer(bytes, 'binary')};
     };
 

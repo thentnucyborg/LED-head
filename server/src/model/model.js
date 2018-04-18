@@ -1,7 +1,5 @@
 const {hexToRGB, RGBtoString, RGBAToHex} = require('../utils/colorUtils');
 const {wave} = require('../utils/numberUtils');
-const p = 5*60
-const f = 1/255
 
 /*
 * Controls the grid array
@@ -22,7 +20,7 @@ class Model {
     createModes() {
         // In the future move to different location.
         return {
-            test1: (dt) => this.grid.map(r => r.map(tile => RGBAToHex({r: 255, g: 0, b: 255, a: dt % 255}))),
+            test1: (dt) => this.grid.map(r => r.map(tile => RGBAToHex({r: 255, g: 255, b: 255, a: 255}))),
             test2: () => {},
         };
     }
@@ -52,15 +50,6 @@ class Model {
             c = hexToRGB(val);
             return RGBAToHex({r: (c.r * x), g: (c.g * x), b: (c.b * x), a: c.a})
         }))
-    }
-
-    powerUsage() {
-        let sum = 0.0
-        this.grid.forEach(row => row.forEach(val => {
-            c = hexToRGB(val);
-            sum += c.r + c.g + c.b
-        }))
-        return p * sum * f // power = norm(5 * 60 * colorChannelIntencity)
     }
 
     /* Start updating the model with a set mode */
