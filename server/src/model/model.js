@@ -2,75 +2,73 @@
 const { intensity, random, test } = require('./programs');
 const { hexToRGB, RGBtoString, RGBAToHex } = require('../utils/colorUtils');
 const { wave } = require('../utils/numberUtils');
-const p = 5*60
-const f = 1/255
+const p = 5*60;
+const f = 1/255;
 
 /*
 * Controls the grid array
 */
 class Model {
-    constructor(w, h) {
-        this.grid = [...new Array(h * 3)].map((y, i) => [...new Array(w * 3)].map((x, j) => '#000000'));
+  constructor(w, h) {
+    this.grid = [...new Array(h * 3)].map((y, i) => [...new Array(w * 3)].map((x, j) => '#000000'));
 
-        this.modes = this.createModes();
-        this.selectedMode = 'test1';
+    this.modes = this.createModes();
+    this.selectedMode = 'test2';
 
-        this.startDelay = 500;
-        this.frequency = 10;
-        this.maxBrightness = 1.0;
-  
-        this.currentTime = + new Date();
-        this.previousTime = + new Date();
-        this.deltaTime = 0;
-    }
+    this.startDelay = 500;
+    this.frequency = 10;
+    this.maxBrightness = 1.0;
 
-    /* Create object with the different modes */
-    createModes() {
-        return {
-          test1: test,
-          test2: random,
-          test3: intensity,
-        };
-    }
+    this.currentTime = + new Date();
+    this.previousTime = + new Date();
+    this.deltaTime = 0;
+  }
 
-    /* Return as promise to startPulseAnimation chain methods in parent class */
-    getData() {
-        return Promise.resolve({data: this.grid});
-    }
+  /* Create object with the different modes */
+  createModes() {
+    return {
+      test1: test,
+      test2: random,
+      test3: intensity,
+    };
+  }
 
-    /* Set new grid */
-    setData(grid) {
-        // Todo - check if data is correct
-        this.grid = (grid instanceof String) ? JSON.parse(grid) : grid;
-        this.brightness(this.maxBrightness)
-    }
+  /* Return as promise to startPulseAnimation chain methods in parent class */
+  getData() {
+    return Promise.resolve({data: this.grid});
+  }
 
-    setMaxBrightness(x) {
-        this.maxBrightness = (x <= 1) ? x : 1
-    }
+  /* Set new grid */
+  setData(grid) {
+    // Todo - check if data is correct
+    this.grid = (grid instanceof String) ? JSON.parse(grid) : grid;
+    this.brightness(this.maxBrightness);
+  }
 
-    /* Constricts all LEDS to maximum brightness */
-    brightness(x) {
-        if (x >= 1) {
-            return
-        }
-        this.grid.map(row => row.map(val => {
-            c = hexToRGB(val);
-            return RGBAToHex({r: (c.r * x), g: (c.g * x), b: (c.b * x), a: c.a})
-        }))
-    }
+  setMaxBrightness(x) {
+    this.maxBrightness = (x <= 1) ? x : 1;
+  }
 
-    powerUsage() {
-        let sum = 0.0
-        this.grid.forEach(row => row.forEach(val => {
-            c = hexToRGB(val);
-            sum += c.r + c.g + c.b
-        }))
-        return p * sum * f // power = norm(5 * 60 * colorChannelIntencity)
-    }
+  /* Constricts all LEDS to maximum brightness */
+  brightness(x) {
+    if (x >= 1) return;
+    this.grid.map(row => row.map(val => {
+      const { r, g, b, a } = hexToRGB(val);
+      return RGBAToHex({r: (r * x), g: (g * x), b: (b * x), a: a});
+    }));
+  }
 
-      /* Start updating the model with a set mode */
-  start() {
+  powerUsage() {
+    let sum = 0.0;
+    this.grid.forEach(row => row.forEach(val => {
+      const { r, g, b } = hexToRGB(val);
+      sum += r + g + b;
+    }));
+    return p * sum * f; // power = norm(5 * 60 * colorChannelIntencity)
+  }
+
+  /* Start updating the model with a set mode */
+  startAnimation() {
     console.log(`Start model changes ${this.selectedMode}`);
 
     setTimeout(() => { 

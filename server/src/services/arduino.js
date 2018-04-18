@@ -16,7 +16,9 @@ const createConnection = () => (
 );
 
 /* True if successfull serial connection */
-const isConnected = () => ((serial) ? true : false);
+const isConnected = () => {
+  return (serial) ? true : false;
+};
 
 /* Auto find the correct port */
 const findPort = () => (
@@ -50,12 +52,12 @@ const setObserver = (obs) => {
 
 /* Set mapping for the arduino LED device */
 const getMapping = (targetDevice) => {
-    return mappings[targetDevice]
-}
+  return mappings[targetDevice];
+};
 
 /* Send buffer message */
 const send = (buffer) => {
-  serial.write(buffer)
+  serial.write(buffer);
 };
 
 module.exports = Object.assign({}, { createConnection, isConnected, setObserver, send, getMapping });
