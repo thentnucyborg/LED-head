@@ -9,7 +9,7 @@ module.exports = class Controller {
   constructor({ arduino, socket }) {
     this.arduino = arduino;
     this.socket = socket;
-    this.device = "LEDCUBE"
+    this.device = 'LEDCUBE';
     this.model = new Model(4, 4);
 
     this.setObservers({
@@ -22,15 +22,19 @@ module.exports = class Controller {
       socket: this.socket,
     });
 
-    this.model.startPulseAnimation();
+    this.model.startAnimation();
     this.start();
   }
 
   /* Attach observer methods to the connections */
   setObservers({ socket, arduino }) {
     socket.setObserver({
+
       notifyConnected: () => { console.log('socket connected'); },
-      notifyMessage: (data) => { console.log('socket data', data); this.model.setData(data)},
+      notifyMessage: (data) => {
+        console.log('socket data', data);
+        this.model.setData(data);
+      },
       notifyDisconnect: () => { console.log('socket disconnected'); },
       notifyError: (error) => { console.log('socket error', error); },
     });
@@ -50,23 +54,24 @@ module.exports = class Controller {
     };
 
     arduino.mapping = ({ data }) => {
-      let mapping = this.arduino.getMapping(this.device)
-      let bytes = new Uint8Array(mapping.leds * 3)
+      let mapping = this.arduino.getMapping(this.device);
+      let bytes = new Uint8Array(mapping.leds * 3);
       data.forEach((row, y) => {
         row.forEach((val, x) => {
-          let led = mapping.mapping[y][x] * 3
+          let led = mapping.mapping[y][x] * 3;
           if (led < 0 ) {
-            bytes[led+0] = 0
-            bytes[led+1] = 0
-            bytes[led+2] = 0
+            bytes[led+0] = 0;
+            bytes[led+1] = 0;
+            bytes[led+2] = 0;
           } else {
-            let c = hexToRGB(val)
-            bytes[led+0] = c.r
-            bytes[led+1] = c.g
-            bytes[led+2] = c.b
+            let c = hexToRGB(val);
+            bytes[led+0] = c.r;
+            bytes[led+1] = c.g;
+            bytes[led+2] = c.b;
           }
-      })})
-        console.log("powerusage: ", powerUsage(data, mapping))
+        });
+      });
+      console.log("powerusage: ", powerUsage(data, mapping))
       return {data: new Buffer(bytes, 'binary')};
     };
 
@@ -75,7 +80,7 @@ module.exports = class Controller {
     };
 
     arduino.format = ({ data }) => {
-      return data
+      return data;
     };
   }
 
@@ -92,7 +97,7 @@ module.exports = class Controller {
 
   /* Process data and send to clients */
   transmitt({ getData, connection }) {
-    if (!connection.isConnected()) {;return;}
+    if (!connection.isConnected()) return;
     getData()
       .then(connection.mapping)
       .then(connection.format)
