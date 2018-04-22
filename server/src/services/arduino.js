@@ -1,8 +1,8 @@
 const SerialPort = require('serialport');
 const chain = () => new Promise(res => res());
 const mappings = {
-  LEDCUBE: require('../mappings/ledCubeMapping.json')
-  // CYBORGHEAD: JSON.parse(require('../mappings/cyborgHeadMapping.json')),
+  LEDCUBE: require('../mappings/ledCubeMapping.json'),
+  CYBORGHEAD: require('../mappings/cyborgHeadMapping.json')
 };
 
 let serial = null;

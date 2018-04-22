@@ -1,4 +1,10 @@
 const electrodes = 60
 const fakeBrainActivity = (min, max) => {
-    return Array(electrodes).map(() => math.floor(math.randint() * max - min))
+    let activity = []
+    for (let i = 0; i < electrodes; i++) {
+        activity.push(Math.floor(Math.random() * max - min))
+    }
+    return activity
 }
+
+module.exports = {fakeBrainActivity}

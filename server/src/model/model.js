@@ -1,4 +1,4 @@
-const { intensity, random, test } = require('./programs');
+const { intensity, random, test, maxIntensity, fakeBrain, oneByOne } = require('./programs');
 const { hexToRGB, RGBtoString, RGBAToHex } = require('../utils/colorUtils');
 const { wave } = require('../utils/numberUtils');
 /*
@@ -9,11 +9,10 @@ class Model {
     this.grid = [...new Array(h * 3)].map((y, i) => [...new Array(w * 3)].map((x, j) => '#000000'));
 
     this.modes = this.createModes();
-    this.selectedMode = 'test2';
+    this.selectedMode = 'test4';
 
     this.startDelay = 500;
     this.frequency = 10;
-    this.maxBrightness = 1.0;
 
     this.currentTime = + new Date();
     this.previousTime = + new Date();
@@ -26,6 +25,9 @@ class Model {
       test1: test,
       test2: random,
       test3: intensity,
+      test4: maxIntensity,
+      brainActivity: fakeBrain,
+      oneByOne: oneByOne
     };
   }
 
@@ -41,22 +43,9 @@ class Model {
     this.brightness(this.maxBrightness);
   }
 
-  setMaxBrightness(x) {
-    this.maxBrightness = (x <= 1) ? x : 1;
-  }
-
-  /* Constricts all LEDS to maximum brightness */
-  brightness(x) {
-    if (x >= 1) return;
-    this.grid.map(row => row.map(val => {
-      const { r, g, b, a } = hexToRGB(val);
-      return RGBAToHex({r: (r * x), g: (g * x), b: (b * x), a: a});
-    }));
-  }
-
-    /* Start updating the model with a set mode */
-    startAnimation() {
-        console.log(`Start model changes ${this.selectedMode}`);
+  /* Start updating the model with a set mode */
+  startAnimation() {
+    console.log(`Start model changes ${this.selectedMode}`);
 
     setTimeout(() => {
       setInterval(() => {

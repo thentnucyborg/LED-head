@@ -9,8 +9,8 @@ module.exports = class Controller {
   constructor({ arduino, socket }) {
     this.arduino = arduino;
     this.socket = socket;
-    this.device = 'LEDCUBE';
-    this.model = new Model(4, 4);
+    this.device = 'CYBORGHEAD';
+    this.model = new Model(10, 10);
 
     this.setObservers({
       arduino: this.arduino,
@@ -55,23 +55,37 @@ module.exports = class Controller {
 
     arduino.mapping = ({ data }) => {
       let mapping = this.arduino.getMapping(this.device);
-      let bytes = new Uint8Array(mapping.leds * 3);
-      data.forEach((row, y) => {
-        row.forEach((val, x) => {
-          let led = mapping.mapping[y][x] * 3;
-          if (led < 0 ) {
-            bytes[led+0] = 0;
-            bytes[led+1] = 0;
-            bytes[led+2] = 0;
-          } else {
-            let c = hexToRGB(val);
-            bytes[led+0] = c.r;
-            bytes[led+1] = c.g;
-            bytes[led+2] = c.b;
-          }
-        });
-      });
-      console.log("powerusage: ", powerUsage(data, mapping))
+      let bytes = new Uint8Array((mapping.leds )* 3);
+
+     // for (let i = 0; i < (mapping.leds); i++ ) {
+     //   let led = i * 3;
+     //   bytes[led+0] = 50;
+     //   bytes[led+1] = 50;
+     //   bytes[led+2] = 50;
+     // }
+
+       data.forEach((row, y) => {
+         row.forEach((val, x) => {
+           let led = mapping.mapping[y][x] * 3;
+           if (led < 0 ) {
+             bytes[led+0] = 0;
+             bytes[led+1] = 0;
+             bytes[led+2] = 0;
+           } else {
+             let p = powerUsage(data, mapping)
+             let c = NaN
+             if (p > mapping.maxPowerConsumption) {
+                 c = hexToRGB(val, mapping.maxPowerConsumption / p);
+                 console.log(p, mapping.maxPowerConsumption / p)
+             } else {
+               c = hexToRGB(val)
+             }
+             bytes[led+0] = c.r;
+             bytes[led+1] = c.g;
+             bytes[led+2] = c.b;
+           }
+         });
+       });
       return {data: new Buffer(bytes, 'binary')};
     };
 
@@ -91,7 +105,7 @@ module.exports = class Controller {
       setInterval(() => {
         this.transmitt({ getData: () => this.model.getData(), connection: this.arduino });
         this.transmitt({ getData: () => this.model.getData(), connection: this.socket });
-      }, 1000 / 30);
+      }, 1000);
     }, 2000);
   }
 
