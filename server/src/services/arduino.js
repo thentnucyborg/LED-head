@@ -1,8 +1,8 @@
 const SerialPort = require('serialport');
 const chain = () => new Promise(res => res());
 const mappings = {
-  LEDCUBE: require('../mappings/ledCubeMapping.json')
-  // CYBORGHEAD: JSON.parse(require('../mappings/cyborgHeadMapping.json')),
+  LEDCUBE: require('../mappings/ledCubeMapping.json'),
+  CYBORGHEAD: require('../mappings/cyborgHeadMapping.json')
 };
 
 let serial = null;
@@ -29,7 +29,7 @@ const findPort = () => (
 /* Create a serial connections */
 const connect = ({ comName }) => {
   const options = {
-    baudRate: 115200,
+    baudRate: 1000000,
     dataBits: 8,
     parity: 'none',
     stopBits: 1

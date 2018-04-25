@@ -1,20 +1,20 @@
-
-const { intensity, random, test, shift, nothing } = require('./programs');
-const { hexToRGB, RGBAToHex } = require('../utils/colorUtils');
+const { intensity, random, test, shift, nothing, maxIntensity, fakeBrain, oneByOne } = require('./programs');
+const { hexToRGB, RGBtoString, RGBAToHex } = require('../utils/colorUtils');
+const { wave } = require('../utils/numberUtils');
 
 /*
 * Controls the grid array
 */
 class Model {
-  constructor(w, h) {
-    this.grid = [...new Array(h * 3)].map((y, i) => [...new Array(w * 3)].map((x, j) => '#000000'));
+  constructor(w, h, freq, mode) {
+    this.grid = [...new Array(h)].map((y, i) => [...new Array(w)].map((x, j) => '#000000'));
 
     this.shows = this.createShow();
     this.selectedShow = 'm2';
 
     this.interval;
-    this.startDelay = 200;
-    this.frequency = 10;
+    this.startDelay = 500;
+    this.frequency = 500;
     this.maxBrightness = 1.0;
 
     this.currentTime = + new Date();
@@ -30,6 +30,9 @@ class Model {
       m3: random,
       m4: intensity,
       m5: shift,
+      m6: maxIntensity,
+      m7: fakeBrain,
+      m8: oneByOne,
     };
   }
 

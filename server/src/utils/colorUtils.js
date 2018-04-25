@@ -5,8 +5,8 @@ const hexToRGBA = (hex) => ({
   a: parseInt(hex.slice(7, 9), 16),
 });
 
-const hexToRGB = (hex) => {
-  let alpha = parseInt(hex.slice(7, 9), 16) / 255;
+const hexToRGB = (hex, alpha=null) => {
+  alpha = (alpha) ? alpha : parseInt(hex.slice(7, 9), 16) / 255;
 
   return {
     r: parseInt(hex.slice(1, 3), 16) * alpha,
@@ -32,4 +32,4 @@ const RGBAToHex = ({ r, g, b, a }) => (
   `#${toHex(r)}${toHex(g)}${toHex(b)}${toHex(a)}`
 );
 
-module.exports = { hexToRGB, hexToRGBA, RGBtoString, RGBAToHex, randomHex };
+module.exports = { hexToRGB, hexToRGBA, RGBtoString, RGBAToHex, randomHex, toHex};
