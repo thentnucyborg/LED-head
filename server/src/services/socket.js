@@ -33,7 +33,7 @@ const killClient = (ws) => {
 };
 
 /* Send buffer to all socket connections */
-const send = ({ buffer }) => {
+const send = (buffer) => {
   clients.forEach(e => {
     if (e.readyState === WebSocket.OPEN) e.send(JSON.stringify(buffer));
   });

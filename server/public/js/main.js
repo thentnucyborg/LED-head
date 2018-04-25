@@ -1,8 +1,8 @@
 import { Render } from './render/render.js';
 import { WebService, SocketService } from './webService.js';
 
-const web = new WebService('http://localhost:3000/api');
-const socket = new SocketService('ws://localhost:3000');
+const web = new WebService('http://localhost:8080/api');
+const socket = new SocketService('ws://localhost:8080');
 const render = new Render();
 
 render.start();

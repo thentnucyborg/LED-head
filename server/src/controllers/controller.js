@@ -9,7 +9,8 @@ module.exports = class Controller {
     this.arduino = arduino;
     this.socket = socket;
     this.device = 'LEDCUBE';
-    this.model = new Model(4, 4);
+    this.model = new Model(6, 6);
+    this.interval = null;
 
     this.setObservers({
       arduino: this.arduino,
@@ -20,9 +21,6 @@ module.exports = class Controller {
       arduino: this.arduino,
       socket: this.socket,
     });
-
-    this.model.startAnimation();
-    this.start();
   }
 
   /* Attach observer methods to the connections */
@@ -70,11 +68,11 @@ module.exports = class Controller {
           }
         });
       });
-      return {data: new Buffer(bytes, 'binary')};
+      return { data: new Buffer(bytes, 'binary') };
     };
 
     socket.format = ({ data }) => {
-      return { buffer: data };
+      return data;
     };
 
     arduino.format = ({ data }) => {
@@ -82,20 +80,38 @@ module.exports = class Controller {
     };
   }
 
-  /* Start transmitting */
+  /* Start model update and data transmitting */
   start() {
     console.log('Start transmitting in 2 seconds');
+    this.model.start();
+
     setTimeout(() => { 
-      setInterval(() => {
+      this.interval = setInterval(() => {
         this.transmitt({ getData: () => this.model.getData(), connection: this.arduino });
         this.transmitt({ getData: () => this.model.getData(), connection: this.socket });
-      }, 1000 / 30);
-    }, 2000);
+      }, 100);
+    }, 200);
+  }
+
+  /* Stop model update data transmitting */
+  stop() {
+    console.log('stop');
+    this.model.stop();
+    clearInterval(this.interval);
+  }
+
+  /* Set the model show */
+  setShow(show) {
+    this.model.setShow(show);
+  }
+
+  /* Set the mode */
+  setMode(mode) {
+    this.device = mode;
   }
 
   /* Process data and send to clients */
   transmitt({ getData, connection }) {
-    console.log(connection.isConnected());
     if (!connection.isConnected()) return;
     getData()
       .then(connection.mapping)
