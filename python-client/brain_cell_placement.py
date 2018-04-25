@@ -32,31 +32,27 @@ arr = [
   ]
 
 
-i0 = 0
+braincells = 60
+from random import randint
 
-for iy, y in enumerate(arr):
-    temp = 0
-    for x in y:
-        if x == 0: temp+= 1
-    print("Line %d contains %d fields" % (iy, temp))
-    i0 += temp
+randomXY = lambda : (randint(0, len(arr)-1), randint(0, len(arr[0])-1))
 
-print("sum = ", i0)
-i = 0
+def neighbours(x, y):
+    return [(x+1, y), (x-1, y), (x, y+1), (x, y-1), (x+1, y+1), (x-1, y+1), (x+1, y-1), (x-1, y-1)]
 
-for y in range(len(arr)):
-    if y % 2 == 0:
-        for x in range(len(arr[y])):
-            if arr[y][x] == 0:
-                arr[y][x] = i
-                i += 1
-    else:
-        for x in reversed(range(len(arr[y]))):
-            if arr[y][x] == 0:
-                arr[y][x] = i
-                i += 1
 
-# import numpy# arr = numpy.array(arr).transpose().tolist()
+placements = []
+for cell in range(0, braincells):
+    while True:
+        pos = randomXY()
+        placed = True
+        for x, y in neighbours(*pos):
+            if (0 <= y < len(arr) and 0 <= x < len(arr[y])) and (arr[y][x] == -1 or arr[y][x] > 0):
+                placed = False
+                break
+        if placed:
+            y, x = pos
+            placements += [{"x": x, "y": y}]
+            break
 
-print("\n".join([str(a) for a in arr]))
-
+print(placements)

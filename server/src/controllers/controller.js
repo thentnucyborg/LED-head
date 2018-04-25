@@ -10,7 +10,10 @@ module.exports = class Controller {
     this.arduino = arduino;
     this.socket = socket;
     this.device = 'CYBORGHEAD';
-    this.model = new Model(10, 10);
+
+    this.freq = 1000/2
+    this.mode = 'test1'
+    this.model = new Model(35, 30, this.freq, this.mode);
 
     this.setObservers({
       arduino: this.arduino,
@@ -55,14 +58,16 @@ module.exports = class Controller {
 
     arduino.mapping = ({ data }) => {
       let mapping = this.arduino.getMapping(this.device);
-      let bytes = new Uint8Array((mapping.leds )* 3);
-
-     // for (let i = 0; i < (mapping.leds); i++ ) {
-     //   let led = i * 3;
-     //   bytes[led+0] = 50;
-     //   bytes[led+1] = 50;
-     //   bytes[led+2] = 50;
-     // }
+      let bytes = new Uint8Array((791 )* 3);
+    //mapping.leds
+    /*
+      for (let i = 0; i < (791); i++ ) {
+        let led = i * 3;
+        bytes[led+0] = 200;
+        bytes[led+1] = 1;
+        bytes[led+2] = 60;
+      }
+      */
 
        data.forEach((row, y) => {
          row.forEach((val, x) => {
@@ -86,6 +91,7 @@ module.exports = class Controller {
            }
          });
        });
+
       return {data: new Buffer(bytes, 'binary')};
     };
 
@@ -105,7 +111,7 @@ module.exports = class Controller {
       setInterval(() => {
         this.transmitt({ getData: () => this.model.getData(), connection: this.arduino });
         this.transmitt({ getData: () => this.model.getData(), connection: this.socket });
-      }, 1000);
+      }, this.freq);
     }, 2000);
   }
 

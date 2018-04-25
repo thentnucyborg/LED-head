@@ -5,14 +5,14 @@ const { wave } = require('../utils/numberUtils');
 * Controls the grid array
 */
 class Model {
-  constructor(w, h) {
-    this.grid = [...new Array(h * 3)].map((y, i) => [...new Array(w * 3)].map((x, j) => '#000000'));
+  constructor(w, h, freq, mode) {
+    this.grid = [...new Array(h)].map((y, i) => [...new Array(w)].map((x, j) => '#000000'));
 
     this.modes = this.createModes();
-    this.selectedMode = 'test4';
+    this.selectedMode = mode;
 
     this.startDelay = 500;
-    this.frequency = 10;
+    this.frequency = freq;
 
     this.currentTime = + new Date();
     this.previousTime = + new Date();

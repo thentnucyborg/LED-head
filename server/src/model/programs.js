@@ -28,17 +28,17 @@ const random = ({ dt, time, grid }) => (
 
 var counter = 0
 const oneByOne = ({ dt, time, grid }) => {
-    grid.map((r, y) => r.map((tile, x) => {
-        if (y * r.length + x === counter) {
-            RGBAToHex({r: 255, g: 255, b: 255, a: 255})
+    const newg = grid.map((r, y) => r.map((tile, x) => {
+        if (y*r.length + x === counter) {
+            return RGBAToHex({r: 255, g: 255, b: 255, a: 255})
             console.log(counter)
         } else {
-            RGBAToHex({r: 255, g: 255, b: 255, a: 0})
+            return RGBAToHex({r: 0, g: 0, b: 0, a: 0})
         }
     }))
     counter++
     if (counter === 791) counter = 0
-    return grid
+    return newg
 };
 
 let lastUpdate = + new Date()

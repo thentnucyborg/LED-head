@@ -29,7 +29,7 @@ const findPort = () => (
 /* Create a serial connections */
 const connect = ({ comName }) => {
   const options = {
-    baudRate: 115200,
+    baudRate: 1000000,
     dataBits: 8,
     parity: 'none',
     stopBits: 1
