@@ -25,11 +25,17 @@ CRGB leds[NUM_LEDS];
 // SETUP LEDS AND SERIAL COMMUINICATION
 void setup() {
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);
+
+  // Board controls:
   // FastLED.setBrightness(255);
   // FastLED.setMaxPowerInVoltsAndMilliamps(5, 10000);
+
   FastLED.clear();
   FastLED.show();
+
+  // TEST DEMO:
   // meteorRain(0xff,0xff,0xff,10, 64, true, 30);
+
   Serial.begin(BAUDRATE, SERIAL_8N1);     //Starting serial communication, 8 data bits, no parity, 1 stop bit
 }
 
