@@ -8,11 +8,22 @@ const { getMapping } = require("../services/arduino")
 * grid - grid
 * Return updated grid
 */
-const test = ({ dt, time, grid }) => {
+const nothing = ({ dt, time, grid }) => {
   // do changes
   return grid;
 };
 
+const test = ({ dt, time, grid }) => {
+  let r = () => Math.floor(Math.random() * grid.length);
+  grid[r()][r()] = (grid[r()][r()] === '#000000ff') ? '#ff0000ff' : '#000000ff';
+  grid[r()][r()] = (grid[r()][r()] === '#000000ff') ? '#ff0000ff' : '#000000ff';
+  grid[r()][r()] = (grid[r()][r()] === '#000000ff') ? '#ff0000ff' : '#000000ff';
+  grid[r()][r()] = (grid[r()][r()] === '#000000ff') ? '#ff0000ff' : '#000000ff';
+  //grid[r()][r()] = (grid[r()][r()] === '#000000ff') ? '#ff0000ff' : '#000000ff';
+  //grid[r()][r()] = (grid[r()][r()] === '#000000ff') ? '#ff0000ff' : '#000000ff';
+  //grid[r()][r()] = (grid[r()][r()] === '#000000ff') ? '#ff0000ff' : '#000000ff';
+  return grid;
+};
 
 const intensity = ({ dt, time, grid}) => (
   grid.map(r => r.map(tile => RGBAToHex({ r: 255, g: 0, b: 255, a: dt/1000000000000000 % (255/4) })))
@@ -65,5 +76,18 @@ const fakeBrain = ({ dt, time, grid }) => {
   return grid
 }
 
+let n = 0;
+let lastUpdate = + new Date();
+const shift = ({ dt, time, grid }) => {
+  if (time - lastUpdate > 200) {
+    lastUpdate = time;
 
-module.exports = { maxIntensity, intensity, random, test, fakeBrain, oneByOne };
+    grid[n][5] = '#ffffffff';
+    n = (n + 1 < grid.length) ? n + 1 : 0;
+    grid[n][5] = '#00000000';
+  }
+
+  return grid;
+};
+
+module.exports = { maxIntensity, intensity, random, test, shift, nothing, fakeBrain, oneByOne };

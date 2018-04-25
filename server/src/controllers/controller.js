@@ -9,10 +9,8 @@ module.exports = class Controller {
   constructor({ arduino, socket }) {
     this.arduino = arduino;
     this.socket = socket;
+    this.interval = null;
     this.device = 'CYBORGHEAD';
-
-    this.freq = 1000/2
-    this.mode = 'test1'
     this.model = new Model(35, 30, this.freq, this.mode);
 
     this.setObservers({
@@ -24,9 +22,6 @@ module.exports = class Controller {
       arduino: this.arduino,
       socket: this.socket,
     });
-
-    this.model.startAnimation();
-    this.start();
   }
 
   /* Attach observer methods to the connections */
@@ -59,15 +54,6 @@ module.exports = class Controller {
     arduino.mapping = ({ data }) => {
       let mapping = this.arduino.getMapping(this.device);
       let bytes = new Uint8Array((791 )* 3);
-    //mapping.leds
-    /*
-      for (let i = 0; i < (791); i++ ) {
-        let led = i * 3;
-        bytes[led+0] = 200;
-        bytes[led+1] = 1;
-        bytes[led+2] = 60;
-      }
-      */
 
        data.forEach((row, y) => {
          row.forEach((val, x) => {
@@ -96,7 +82,7 @@ module.exports = class Controller {
     };
 
     socket.format = ({ data }) => {
-      return { buffer: data };
+      return data;
     };
 
     arduino.format = ({ data }) => {
@@ -104,15 +90,34 @@ module.exports = class Controller {
     };
   }
 
-  /* Start transmitting */
+  /* Start model update and data transmitting */
   start() {
     console.log('Start transmitting in 2 seconds');
+    this.model.start();
+
     setTimeout(() => { 
-      setInterval(() => {
+      this.interval = setInterval(() => {
         this.transmitt({ getData: () => this.model.getData(), connection: this.arduino });
         this.transmitt({ getData: () => this.model.getData(), connection: this.socket });
-      }, this.freq);
-    }, 2000);
+      }, 100);
+    }, 500);
+  }
+
+  /* Stop model update data transmitting */
+  stop() {
+    console.log('stop');
+    this.model.stop();
+    clearInterval(this.interval);
+  }
+
+  /* Set the model show */
+  setShow(show) {
+    this.model.setShow(show);
+  }
+
+  /* Set the mode */
+  setMode(mode) {
+    this.device = mode;
   }
 
   /* Process data and send to clients */

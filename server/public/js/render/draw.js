@@ -58,7 +58,7 @@ export class Draw {
       ctx.fill();
     };
 
-    // Todo - prettify ❤️
+    // Todo - prettify ❤
     grid.top.forEach((l, x) => l.forEach((e, y) => 
       drawTop((x+y)*w+75, 150+y*w-(w*x/2)-(y*w/2), w, e)));
     grid.first.forEach((l, x) => l.forEach((e, y) => 
