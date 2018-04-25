@@ -7,6 +7,7 @@ const defaultState = {
   showIndex: 0,
   grid: g,
   error: '',
+  mode: 'LEDCUBE',
 };
 
 const index = (state = defaultState, action) => {
