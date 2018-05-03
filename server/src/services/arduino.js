@@ -39,10 +39,11 @@ const connect = ({ comName }) => {
   // Todo - better error message if arduino not connected.
   serial = new SerialPort(comName, options);
 
-  serial.on('open', () => { observer.notifyConnected(); });
-  serial.on('data', (data) => { observer.notifyMessage(data.toString('utf-8')); });
-  serial.on('error', (error) => { observer.notifyError(error); });
-  serial.on('close', () => { observer.notifyDisconnect(); });
+  serial.on('open', () => observer.notifyConnected());
+  serial.on('data', (data) => observer.notifyMessage(data.toString('utf-8')));
+  serial.on('error', (error) => observer.notifyError(error));
+  serial.on('close', () => observer.notifyDisconnect());
+  // missing end of promise
 };
 
 /* Add a listener */

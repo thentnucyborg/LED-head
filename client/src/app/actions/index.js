@@ -13,13 +13,12 @@ const handler = (promise) => async () => {
     .catch((error) => console.log(error))
 }
 
-*/
-
 const handler = (dispatch) => (promise) => (type) => {
   promise
     .then((result) => dispatch(actionCreator(type)(result)))
     .catch((error) => dispatch(actionCreator(types.ON_ERROR)(error)));
 };
+*/
 
 export const setGrid = (payload) => actionCreator(types.SET_GRID)(payload);
 
@@ -41,7 +40,6 @@ export const stopShow = () => (dispatch) => {
 
 export const setShow = (index) => (dispatch) => {
   api.setShow(index).then((res) => {
-    console.log(index);
     dispatch(actionCreator(types.SET_SHOW)({ showIndex: index }));
   }).catch((error) => {
     dispatch(actionCreator(types.ON_ERROR)(error));
@@ -50,16 +48,14 @@ export const setShow = (index) => (dispatch) => {
 
 export const setMode = (mode) => (dispatch) => {
   api.setMode(mode).then((res) => {
-    console.log(mode);
-    dispatch(actionCreator(types.SET_SHOW)({ mode: mode }));
+    dispatch(actionCreator(types.SET_MODE)({ mode: mode }));
   }).catch((error) => {
     dispatch(actionCreator(types.ON_ERROR)(error));
   });
 };
 
-
 export const onOpen = (payload) => (dispatch) => {
-  console.log('connected');
+
 };
 
 export const onMessage = (payload) => (dispatch) => {
@@ -67,10 +63,9 @@ export const onMessage = (payload) => (dispatch) => {
 };
 
 export const onClose = (payload) => (dispatch) => {
-  console.log('close');
+
 };
 
 export const onError = (payload) => (dispatch) => {
-  console.log('error');
   dispatch(actionCreator(types.ON_ERROR)(payload));
 };

@@ -14,10 +14,11 @@ const Group = styled.div`
   flex-flow: row wrap;
   align-items: center;
   justify-content: center;
+  margin: 0.5rem;
 `;
 
 const Button = styled.button`
-  margin: 1rem;
+  margin: 0.3rem;
   padding: 0.35
   rem;
   width: 100px;
@@ -51,7 +52,11 @@ const Controls = ({ setMode, startShow, stopShow, setShow, isRunning, showIndex 
       <Button color={'MidnightBlue'} onClick={() => setShow(1)}> Nothing </Button>
       <Button color={'MidnightBlue'} onClick={() => setShow(2)}> Emo </Button>
       <Button color={'MidnightBlue'} onClick={() => setShow(3)}> Random </Button>
-      <Button color={'MidnightBlue'} onClick={() => setShow(3)}> Wave </Button>
+      <Button color={'MidnightBlue'} onClick={() => setShow(4)}> 4 </Button>
+      <Button color={'MidnightBlue'} onClick={() => setShow(5)}> 5 </Button>
+      <Button color={'MidnightBlue'} onClick={() => setShow(6)}> 6 </Button>
+      <Button color={'MidnightBlue'} onClick={() => setShow(7)}> Brain </Button>
+      <Button color={'MidnightBlue'} onClick={() => setShow(8)}> 8 </Button>
     </Group>
   </Wrapper>
 );

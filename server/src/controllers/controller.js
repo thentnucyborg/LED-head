@@ -1,17 +1,25 @@
 const Model = require('../model/model');
-const {hexToRGB} = require('../utils/colorUtils');
-const {powerUsage} = require('../utils/powerUtils');
+const { hexToRGB } = require('../utils/colorUtils');
+const { powerUsage } = require('../utils/powerUtils');
 
 /*
 * Binding together all connections. Recieves, maps, formats and sends data.
 */
 module.exports = class Controller {
-  constructor({ arduino, socket }) {
+  constructor({ arduino, socket, config: { frequency, startDelay, autoStart, autoStartShow } }) {
     this.arduino = arduino;
     this.socket = socket;
+    
     this.interval = null;
-    this.device = 'CYBORGHEAD';
-    this.model = new Model(35, 30, this.freq, this.mode);
+    this.frequency = frequency;
+    this.startDelay = startDelay;
+
+    this.model = new Model({ frequency: frequency, startDelay: startDelay, show: autoStartShow });
+
+    this.devices = {
+      CYBORGHEAD: { width: 35, height: 30 },
+      LEDCUBE: { width: 9, height: 9 },
+    };
 
     this.setObservers({
       arduino: this.arduino,
@@ -22,12 +30,14 @@ module.exports = class Controller {
       arduino: this.arduino,
       socket: this.socket,
     });
+
+    (autoStart) ? this.start() : null;
   }
 
   /* Attach observer methods to the connections */
+  // Something else than console log.
   setObservers({ socket, arduino }) {
     socket.setObserver({
-
       notifyConnected: () => { console.log('socket connected'); },
       notifyMessage: (data) => {
         console.log('socket data', data);
@@ -53,32 +63,29 @@ module.exports = class Controller {
 
     arduino.mapping = ({ data }) => {
       let mapping = this.arduino.getMapping(this.device);
-      let bytes = new Uint8Array((791 )* 3);
+      let bytes = new Uint8Array((mapping.leds)* 3);
 
-       data.forEach((row, y) => {
-         row.forEach((val, x) => {
-           let led = mapping.mapping[y][x] * 3;
-           if (led < 0 ) {
-             bytes[led+0] = 0;
-             bytes[led+1] = 0;
-             bytes[led+2] = 0;
-           } else {
-             let p = powerUsage(data, mapping)
-             let c = NaN
-             if (p > mapping.maxPowerConsumption) {
-                 c = hexToRGB(val, mapping.maxPowerConsumption / p);
-                 console.log(p, mapping.maxPowerConsumption / p)
-             } else {
-               c = hexToRGB(val)
-             }
-             bytes[led+0] = c.r;
-             bytes[led+1] = c.g;
-             bytes[led+2] = c.b;
-           }
-         });
-       });
+      data.forEach((row, y) => {
+        row.forEach((val, x) => {
+          let led = mapping.mapping[y][x] * 3;
+          if (led < 0 ) {
+            bytes[led + 0] = 0;
+            bytes[led + 1] = 0;
+            bytes[led + 2] = 0;
+          } else {
+            let p = powerUsage(data, mapping);
+            let c = NaN;
+            if (p > mapping.maxPowerConsumption) {
+              c = hexToRGB(val, mapping.maxPowerConsumption / p);
+            }
+            bytes[led + 0] = c.r;
+            bytes[led + 1] = c.g;
+            bytes[led + 2] = c.b;
+          }
+        });
+      });
 
-      return {data: new Buffer(bytes, 'binary')};
+      return { data: new Buffer(bytes, 'binary') };
     };
 
     socket.format = ({ data }) => {
@@ -105,7 +112,6 @@ module.exports = class Controller {
 
   /* Stop model update data transmitting */
   stop() {
-    console.log('stop');
     this.model.stop();
     clearInterval(this.interval);
   }
@@ -117,7 +123,7 @@ module.exports = class Controller {
 
   /* Set the mode */
   setMode(mode) {
-    this.device = mode;
+    this.model.setGrid(this.devices[mode]);
   }
 
   /* Process data and send to clients */
@@ -127,6 +133,6 @@ module.exports = class Controller {
       .then(connection.mapping)
       .then(connection.format)
       .then(connection.send)
-      .catch(e => console.log('LOl', e));
+      .catch(e => console.log('Transmit error', e));
   }
 };

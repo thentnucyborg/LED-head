@@ -1,20 +1,19 @@
 const { intensity, random, test, shift, nothing, maxIntensity, fakeBrain, oneByOne } = require('./programs');
-const { hexToRGB, RGBtoString, RGBAToHex } = require('../utils/colorUtils');
-const { wave } = require('../utils/numberUtils');
+const { hexToRGB, RGBAToHex } = require('../utils/colorUtils');
 
 /*
 * Controls the grid array
 */
 class Model {
-  constructor(w, h, freq, mode) {
-    this.grid = [...new Array(h)].map((y, i) => [...new Array(w)].map((x, j) => '#000000'));
-
-    this.shows = this.createShow();
-    this.selectedShow = 'm2';
+  constructor({ frequency, startDelay, show }) {
+    this.grid = [[]];
+    this.shows = this.createShows();
+    this.selectedShow = `m${show}`;
+    this.defaultShow = 'm1';
 
     this.interval;
-    this.startDelay = 500;
-    this.frequency = 500;
+    this.startDelay = startDelay;
+    this.frequency = frequency;
     this.maxBrightness = 1.0;
 
     this.currentTime = + new Date();
@@ -23,7 +22,7 @@ class Model {
   }
 
   /* Create object with the different modes */
-  createShow() {
+  createShows() {
     return {
       m1: nothing,
       m2: test,
@@ -38,19 +37,28 @@ class Model {
 
   /* Set mode */
   setShow(show = 1) {
+    this.clearGrid();
     this.selectedShow = `m${show}`;
   }
 
   /* Return as promise to startPulseAnimation chain methods in parent class */
   getData() {
-    return Promise.resolve({data: this.grid});
+    return Promise.resolve({ data: this.grid });
   }
 
-  /* Set new grid */
+  clearGrid() {
+    this.grid = this.grid.map((row) => row.map((val) => '#000000'));
+  }
+
+  /* Set new grid from json format */
   setData(grid) {
-    // Todo - check if data is correct
+    // needs error handling..
     this.grid = (grid instanceof String) ? JSON.parse(grid) : grid;
     this.brightness(this.maxBrightness);
+  }
+
+  setGrid({ width, height }) {
+    this.grid = [...new Array(height)].map((y, i) => [...new Array(width)].map((x, j) => '#000000'));
   }
 
   setMaxBrightness(x) {
@@ -84,7 +92,6 @@ class Model {
     setTimeout(() => { 
       this.interval = setInterval(() => {
         this.currentTime = + new Date();
-
         this.deltaTime = this.currentTime - this.previousTime;
         this.previousTime = this.currentTime;
 
@@ -93,7 +100,6 @@ class Model {
           time: this.currentTime,
           grid: this.grid,
         });
-
       }, this.frequency);
     }, this.startDelay);
   }
@@ -103,9 +109,14 @@ class Model {
     clearInterval(this.interval);
   }
 
-  /* Update the grid */
+  /* Update the grid with params = {dt, time, grid} */
+  // Needs error handling...
   update({...params}) {
-    this.grid = this.shows[this.selectedShow] ? this.shows[this.selectedShow](params) : this.shows['m1'];
+    try {
+      this.grid = this.shows[this.selectedShow] ? this.shows[this.selectedShow](params) : this.shows[this.defaultShow];
+    } catch(error) {
+      console.log(error);
+    }
   }
 }
 

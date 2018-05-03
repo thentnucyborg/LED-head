@@ -11,8 +11,8 @@ const connect = ({ server }) => {
     wss.on('connection', (ws, req) => {
       clients.push(ws);
       observer.notifyConnected();
-      ws.on('message', data => observer.notifyMessage(data));
-      ws.on('error', error => { observer.notifyError(error), killClient(ws); });
+      ws.on('message', (data) => observer.notifyMessage(data));
+      ws.on('error', (error) => { observer.notifyError(error), killClient(ws); });
       ws.on('close', () => { observer.notifyDisconnect(), killClient(ws); });
     });
     resolve();
@@ -34,9 +34,7 @@ const killClient = (ws) => {
 
 /* Send buffer to all socket connections */
 const send = (buffer) => {
-  clients.forEach(e => {
-    if (e.readyState === WebSocket.OPEN) e.send(JSON.stringify(buffer));
-  });
+  clients.filter((e) => (e).readyState === WebSocket.OPEN).forEach((c) => (c).send(JSON.stringify(buffer)));
   return Promise.resolve();
 };
 
