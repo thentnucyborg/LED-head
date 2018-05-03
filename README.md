@@ -66,3 +66,14 @@ Then the server can be started from inside the `/server` folder.
 ## Notable files:
 
 ROOT/server/src/model/Program.js contains the different animations available on the device. All of the functions there are templates of how the animation callback looks.
+
+## Built With
+* [Nodejs](https://nodejs.org/en/) - 9.*
+* [Express](http://expressjs.com/) - 4.15.5
+* [React](https://reactjs.org/) - 16.2.0
+* [React Router](https://github.com/ReactTraining/react-router) - 4.2.0
+* [Redux](https://redux.js.org/) - 4.0.0
+* [Styled Components](https://github.com/styled-components/awesome-styled-components) - 3.2.3 
+* [Webpack](https://webpack.js.org/) - 3.11.0
+* [Babel](https://babeljs.io/) - 6.23.0
+* [ESLint](https://eslint.org/) - 4.19.0
