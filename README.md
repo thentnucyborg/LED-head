@@ -12,29 +12,56 @@ Arduino drivers: https://github.com/arduino/arduino-create-agent.
 
 NB! The arduino drivers needs to be installed through the Arduino Create Agent. The older IDEs will not work with the serialport library.
 
-### Instructions: 
+### Instructions:
 1. Download the source code:
+
 ```BASH
   $   git clone https://github.com/thentnucyborg/LED-server.git
 ```
 
-2. jump into the directory containing the package.json and install dependencies: 
+2. Create a .env inside `/server` file with the following:
 
-```BASH
-  $   cd LED-server/server
-  $   npm install 
+```env
+ADDRESS = localhost
+PORT = 8080
+AUTO_START = false
+AUTO_START_SHOW = 1
+FREQUENCY = 500
+START_DELAY = 500
 ```
 
-## How to use: 
-To start the server, make sure you are in the directory containing the package.json and run the following command from terminal:
+3. Install dependencies:
 
 ```BASH
-  $   npm start 
+  $   npm i --prefix server && npm i --prefix client
 ```
 
-The server is now started and will be hosting the development tool at the address: http://localhost:3000. 
+## Development:
+The server and client needs to be started seperatively, with the following command inside `/server` and `/client` folders: 
+
+```BASH
+  $   npm run start
+```
+
+The server is now started and will be hosting the development tool at the default address: http://localhost:3000.
 
 If visulaization on the arduino device is wanted, make sure the device is connected through USB serial before launching the server. The server software will autodetect the arduino device. 
+
+## Production: 
+The server and client needs to be started seperatively, with the following command inside `/server` and `/client` folders: 
+The client needs to be built first, where the files will be placed inside `/server/src/build`.
+
+```BASH
+  $   cd client
+  $   npm run build
+```
+
+Then the server can be started from inside the `/server` folder.
+
+```BASH
+  $   cd server
+  $   npm run build
+```
 
 ## Notable files:
 
