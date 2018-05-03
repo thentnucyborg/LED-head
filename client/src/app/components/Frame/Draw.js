@@ -71,16 +71,16 @@ const drawCircle = (ctx, x, y, r, color) => {
   ctx.fill();
 };
 
+/* Draws a flat map of the dome */
 const drawDome = ({ ctx, grid, w = 12 }) => {
   const height = grid.length / 3;
   const width = grid[0].length / 3;
   ctx.clearRect(0, 0, w * width, w * height);
-
   const xOffset = 45;
   const yOffset = 75;
 
   grid.forEach((r, i) => r.forEach((e, j) => {
-    drawCircle(ctx, i * w + xOffset, j * w + yOffset, w/4, e);
+    (e !== '#000000') ? drawCircle(ctx, i * w + xOffset, j * w + yOffset, w/4, e) : null;
   }));
 };
 

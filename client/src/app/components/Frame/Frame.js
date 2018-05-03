@@ -21,9 +21,11 @@ class Frame extends Component {
   draw() {
     if (this.canvasElement) {
       const context = this.canvasElement.getContext('2d');
-      if (this.props.mode === 'dome') {
+      if (this.props.mode === 'CYBORGHEAD') {
+        context.clearRect(0, 0, 500, 500);
         drawDome({ ctx: context, grid: this.props.grid });
       } else {
+        context.clearRect(0, 0, 500, 500);
         drawBox({ ctx: context, grid: this.props.grid });
       }
     }

@@ -3,23 +3,22 @@ const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const api = require('../api/index');
-const Controller = require('../controllers/controller');
+const api = require('./api/index');
+const Controller = require('./controllers/controller');
 
 /* Express server with socket handler attached */
 const start = (options) => {
-  const { port, socket } = options;
+  const { config: { address, port }, socket } = options;
   return new Promise((resolve, reject) => {
-
     const app = express();
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false}));
-    app.use(express.static(path.join(__dirname, '../../public')));
+    app.use(express.static(path.join(__dirname, '/build')));
 
     const controller = new Controller(options);
     api(app, { controller: controller });
 
-    const server = http.createServer(app).listen(port, () => {
+    const server = http.createServer(app).listen(port, address, () => {
       socket.connect({ server });
       resolve();
     });

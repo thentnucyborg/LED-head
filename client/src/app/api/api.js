@@ -1,4 +1,4 @@
-import { GET, POST } from '../services/HTTP';
+import { POST } from '../services/HTTP';
 
 const api = 'api';
 

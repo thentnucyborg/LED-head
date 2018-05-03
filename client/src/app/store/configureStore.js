@@ -4,6 +4,7 @@ import thunk from 'redux-thunk';
 import reducer from '../reducers';
 
 const logger = createLogger({
+  predicate: (getState, action) => (action.type !== 'SET_GRID'),
   collapsed: true,
 });
 

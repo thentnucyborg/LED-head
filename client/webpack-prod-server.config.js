@@ -6,7 +6,7 @@ const config = {
   entry: [path.join(__dirname, '/src/app/main.js')],
   devtool: 'source-map',
   output: {
-    path: path.resolve(__dirname, '../backend/src/build'),
+    path: path.resolve(__dirname, '../server/src/build'),
     filename: 'main.js',
   },
   plugins: [
@@ -22,7 +22,7 @@ const config = {
     }),
     new webpack.NoEmitOnErrorsPlugin(),
     new TransferWebpackPlugin([
-      {from: 'www'},
+      { from: 'www' },
     ], path.resolve(__dirname, 'src')),
   ],
   module: {

@@ -21,7 +21,7 @@ module.exports = (app, options) => {
 
   app.post(`${api}/setshow`, (req, res) => {
     const { showIndex } = req.body;
-    controller.setMode(showIndex);
+    controller.setShow(showIndex);
     console.log('set show', showIndex);
     res.json({ success: true });
   });

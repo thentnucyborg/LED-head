@@ -1,13 +1,12 @@
 import * as types from '../constants/ActionTypes';
 
-const g = [...new Array(6*3)].map((x, i) => [...new Array(6*3)].map((y, j) => 'rgba(60, 0, 240, 0.8)'));
 
 const defaultState = {
   isRunning: false,
   showIndex: 0,
-  grid: g,
+  grid: [[]],
   error: '',
-  mode: 'LEDCUBE',
+  mode: 'CYBORGHEAD',
 };
 
 const index = (state = defaultState, action) => {
@@ -16,6 +15,7 @@ const index = (state = defaultState, action) => {
     [types.START_SHOW]: startShow,
     [types.STOP_SHOW]: stopShow,
     [types.SET_SHOW]: setShow,
+    [types.SET_MODE]: setMode,
     [types.SET_GRID]: setGrid,
     [types.ON_UPDATE_GRID]: onUpdateGrid,
     [types.ON_ERROR]: onError,
@@ -36,6 +36,11 @@ const stopShow = (state) => ({
 const setShow = (state, { showIndex }) => ({
   ...state,
   showIndex: showIndex,
+});
+
+const setMode = (state, { mode }) => ({
+  ...state,
+  mode: mode,
 });
 
 const setGrid = (state, { grid }) => ({
